@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Meus animes - AniVerse">
+    <title>AniVerse - Meus Animes</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%238b5cf6'/><text x='50' y='68' font-size='52' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'>AV</text></svg>">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        :root {
+            --bg: #0b0e14; --bg-2: #121721; --bg-3: #1a202c;
+            --border: #1e2638; --border-2: #2d3748;
+            --text: #ffffff; --text-muted: #9ca3af; --text-dim: #718096;
+            --primary: #8b5cf6; --primary-hover: #7c3aed; --blue: #2b7fff;
+            --accent: #38bdf8; --success: #10b981; --danger: #ef4444;
+            --warning: #f59e0b;
+            --legendado: #22c55e; --dublado: #eab308;
+        }
+        body { background-color: var(--bg); color: var(--text); padding-bottom: 50px; }
+
+        header {
+            background-color: var(--bg-2); padding: 15px 30px;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            position: sticky; top: 0; z-index: 100;
+            flex-wrap: wrap; gap: 15px;
+        }
+        .logo-area { display: flex; align-items: center; gap: 10px; }
+        .logo { background-color: var(--blue); color: white; font-weight: bold; padding: 5px 10px; border-radius: 6px; font-size: 18px; }
+        .brand-name { font-size: 20px; font-weight: bold; }
+        .badge-tag { background-color: #6b21a8; font-size: 11px; padding: 3px 8px; border-radius: 12px; color: #d8b4fe; }
+        nav { display: flex; gap: 20px; flex-wrap: wrap; }
+        nav a { color: var(--text-muted); text-decoration: none; font-size: 14px; display: flex; align-items: center; gap: 5px; transition: color 0.2s; padding: 4px 0; position: relative; }
+        nav a.active, nav a:hover { color: var(--text); }
+        nav a.active::after { content: ''; position: absolute; bottom: -18px; left: 0; right: 0; height: 2px; background: var(--primary); border-radius: 2px; }
+        nav a.admin-link { color: var(--primary); }
+        .menu-toggle { display: none; background: var(--bg-3); border: 1px solid var(--border-2); color: white; font-size: 20px; padding: 6px 12px; border-radius: 8px; cursor: pointer; }
+
+        .container { max-width: 1100px; margin: 20px auto; padding: 0 20px; }
+        .page-title { font-size: 24px; font-weight: bold; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+        .page-subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 25px; }
+
+        /* Banner de notificação */
+        .notif-banner {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(56, 189, 248, 0.1));
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .notif-banner-icon { font-size: 36px; flex-shrink: 0; }
+        .notif-banner-info { flex: 1; min-width: 200px; }
+        .notif-banner-info strong { display: block; font-size: 15px; margin-bottom: 4px; }
+        .notif-banner-info p { font-size: 13px; color: var(--text-muted); }
+        .notif-banner-btn {
+            background: var(--primary); color: white;
+            border: none; padding: 12px 22px;
+            border-radius: 8px; font-weight: bold; font-size: 14px;
+            cursor: pointer; transition: all 0.2s;
+            white-space: nowrap;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .notif-banner-btn:hover { background: var(--primary-hover); transform: translateY(-2px); }
+        .notif-banner-btn.ativo {
+            background: var(--success);
+            cursor: default;
+        }
+        .notif-banner-btn.ativo:hover { transform: none; }
+        .notif-banner-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+
+        /* Stats */
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px; margin-bottom: 30px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, var(--bg-2), var(--bg-3));
+            border: 1px solid var(--border); border-radius: 12px;
+            padding: 16px; display: flex; flex-direction: column; gap: 4px;
+        }
+        .stat-icon { font-size: 22px; }
+        .stat-number { font-size: 24px; font-weight: 800; }
+        .stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: bold; }
+
+        .section-header {
+            font-size: 16px; font-weight: bold; margin-bottom: 15px;
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        .animes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .anime-card {
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            gap: 12px;
+            transition: all 0.2s;
+            animation: fadeIn 0.3s ease;
+        }
+        .anime-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.2);
+        }
+        .anime-card img {
+            width: 70px; height: 95px; object-fit: cover;
+            border-radius: 8px; flex-shrink: 0;
+            border: 1px solid var(--border-2);
+        }
+        .anime-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+        .anime-info strong {
+            font-size: 14px; line-height: 1.3;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .anime-meta { font-size: 12px; color: var(--text-muted); }
+        .anime-badges { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; }
+        .badge-small {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 3px 8px; border-radius: 6px;
+            font-size: 10px; font-weight: bold;
+            width: fit-content;
+            border: 1px solid;
+        }
+        .badge-small.legendado { background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.4); color: #86efac; }
+        .badge-small.dublado { background: rgba(234, 179, 8, 0.1); border-color: rgba(234, 179, 8, 0.4); color: #fde047; }
+        .badge-small.dia { background: rgba(139, 92, 246, 0.1); border-color: rgba(139, 92, 246, 0.4); color: #c4b5fd; }
+
+        .btn-remove {
+            background: transparent;
+            border: 1px solid var(--border-2);
+            color: var(--text-muted);
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: bold;
+            transition: all 0.2s;
+            margin-top: auto;
+            align-self: flex-start;
+        }
+        .btn-remove:hover { border-color: var(--danger); color: var(--danger); }
+
+        .empty-state {
+            text-align: center; padding: 60px 20px;
+            color: var(--text-muted); font-size: 14px;
+            border: 1px dashed var(--border-2); border-radius: 12px;
+            background: var(--bg-2);
+        }
+        .empty-state span.icon { display: block; font-size: 56px; margin-bottom: 15px; opacity: 0.6; }
+        .empty-state h3 { font-size: 18px; color: var(--text); margin-bottom: 8px; font-weight: bold; }
+        .empty-state p { margin-bottom: 20px; max-width: 400px; margin-left: auto; margin-right: auto; }
+        .btn-explore {
+            display: inline-block; background: var(--primary); color: white;
+            padding: 10px 22px; border-radius: 8px; text-decoration: none;
+            font-weight: bold; font-size: 13px;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .btn-explore:hover { background: var(--primary-hover); transform: translateY(-2px); }
+
+        .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background: var(--bg-2); border: 1px solid var(--border-2); border-left: 4px solid var(--primary); padding: 12px 18px; border-radius: 8px; font-size: 13px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); animation: slideIn 0.3s ease; min-width: 220px; max-width: 320px; }
+        .toast.success { border-left-color: var(--success); }
+        .toast.error { border-left-color: var(--danger); }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        @media (max-width: 900px) {
+            .menu-toggle { display: block; }
+            nav { display: none; width: 100%; flex-direction: column; gap: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+            nav.open { display: flex; }
+            nav a.active::after { display: none; }
+            nav a.active { color: var(--primary); }
+        }
+        @media (max-width: 640px) {
+            header { padding: 12px 15px; }
+            .container { padding: 0 12px; }
+            .page-title { font-size: 20px; }
+            .animes-grid { grid-template-columns: 1fr; }
+            .notif-banner { flex-direction: column; text-align: center; }
+            .notif-banner-icon { font-size: 48px; }
+        }
+        @media (max-width: 480px) {
+            .brand-name, .badge-tag { display: none; }
+        }
+        button:focus-visible, a:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <div class="logo">AV</div>
+            <div class="brand-name">AniVerse</div>
+            <span class="badge-tag">Fã-Clube</span>
+        </div>
+        <button class="menu-toggle" onclick="toggleMenu()" aria-label="Abrir menu">☰</button>
+        <nav id="mainNav">
+            <a href="agenda.html">📅 Agenda</a>
+            <a href="meus-animes.html" class="active">🔔 Meus Animes</a>
+            <a href="admin.html" class="admin-link">⚙️ Admin</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h1 class="page-title">🔔 Meus Animes</h1>
+        <p class="page-subtitle">Ative as notificações e seja avisado quando sair episódio novo.</p>
+
+        <!-- Banner de ativar notificação -->
+        <div class="notif-banner" id="notifBanner">
+            <div class="notif-banner-icon" id="notifIcon">🔔</div>
+            <div class="notif-banner-info">
+                <strong id="notifTitulo">Ativar notificações</strong>
+                <p id="notifTexto">Receba um aviso quando sair episódio novo dos animes que você segue.</p>
+            </div>
+            <button class="notif-banner-btn" id="notifBtn" onclick="ativarNotificacoes()">
+                🔔 Ativar
+            </button>
+        </div>
+
+        <div class="stats-grid" id="statsGrid"></div>
+
+        <div class="section-header">📅 Próximos Lançamentos</div>
+        <div class="animes-grid" id="animesGrid"></div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="animes.js"></script>
+
+    <script>
+        const STORAGE_NOTIF = 'aniverse_notificacoes';
+        const STORAGE_AGENDA = 'aniverse_agenda_custom';
+        const STORAGE_NOTIF_ATIVA = 'aniverse_notif_ativa';
+        const STORAGE_NOTIF_ENVIADAS = 'aniverse_notif_enviadas';
+
+        let swRegistration = null;
+
+        function toggleMenu() {
+            document.getElementById('mainNav').classList.toggle('open');
+        }
+
+        function showToast(msg, tipo = '') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast ' + tipo;
+            toast.textContent = msg;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        /* ===================================================================
+           REGISTRO DO SERVICE WORKER
+        =================================================================== */
+        async function registrarServiceWorker() {
+            if (!('serviceWorker' in navigator)) {
+                console.warn('Service Worker não suportado');
+                return null;
+            }
+            try {
+                const reg = await navigator.serviceWorker.register('sw.js');
+                console.log('✅ Service Worker registrado:', reg);
+                return reg;
+            } catch (err) {
+                console.error('❌ Erro ao registrar SW:', err);
+                return null;
+            }
+        }
+
+        /* ===================================================================
+           ATIVAR NOTIFICAÇÕES
+        =================================================================== */
+        async function ativarNotificacoes() {
+            if (!('Notification' in window)) {
+                showToast('❌ Seu navegador não suporta notificações.', 'error');
+                return;
+            }
+
+            /* Pede permissão */
+            const permissao = await Notification.requestPermission();
+
+            if (permissao === 'granted') {
+                localStorage.setItem(STORAGE_NOTIF_ATIVA, 'true');
+                showToast('✅ Notificações ativadas!', 'success');
+                atualizarBannerNotif();
+                verificarEpisodios();
+            } else if (permissao === 'denied') {
+                showToast('❌ Você bloqueou as notificações. Libere nas configurações do navegador.', 'error');
+            } else {
+                showToast('⚠️ Permissão não concedida.', 'error');
+            }
+        }
+
+        function notificacoesAtivas() {
+            return localStorage.getItem(STORAGE_NOTIF_ATIVA) === 'true'
+                && Notification.permission === 'granted';
+        }
+
+        function atualizarBannerNotif() {
+            const banner = document.getElementById('notifBanner');
+            const icon = document.getElementById('notifIcon');
+            const titulo = document.getElementById('notifTitulo');
+            const texto = document.getElementById('notifTexto');
+            const btn = document.getElementById('notifBtn');
+
+            if (!('Notification' in window)) {
+                icon.textContent = '❌';
+                titulo.textContent = 'Navegador não suporta';
+                texto.textContent = 'Seu navegador não tem suporte a notificações. Tente pelo Chrome ou Firefox.';
+                btn.style.display = 'none';
+                return;
+            }
+
+            if (Notification.permission === 'denied') {
+                icon.textContent = '🔕';
+                titulo.textContent = 'Notificações bloqueadas';
+                texto.textContent = 'Você bloqueou as notificações. Libere nas configurações do navegador.';
+                btn.textContent = '🔒 Bloqueado';
+                btn.disabled = true;
+                return;
+            }
+
+            if (notificacoesAtivas()) {
+                icon.textContent = '✅';
+                titulo.textContent = 'Notificações ativas!';
+                texto.textContent = 'Você vai receber um aviso quando sair episódio novo.';
+                btn.textContent = '✅ Ativado';
+                btn.classList.add('ativo');
+                btn.disabled = true;
+                return;
+            }
+
+            /* Estado padrão */
+            icon.textContent = '🔔';
+            titulo.textContent = 'Ativar notificações';
+            texto.textContent = 'Receba um aviso quando sair episódio novo dos animes que você segue.';
+            btn.textContent = '🔔 Ativar';
+            btn.classList.remove('ativo');
+            btn.disabled = false;
+        }
+
+        /* ===================================================================
+           NOTIFICAÇÕES
+        =================================================================== */
+        function getNotificacoes() {
+            try { return JSON.parse(localStorage.getItem(STORAGE_NOTIF) || '[]'); }
+            catch { return []; }
+        }
+        function salvarNotificacoes(lista) {
+            localStorage.setItem(STORAGE_NOTIF, JSON.stringify(lista));
+        }
+
+        function carregarAgendaCustom() {
+            try {
+                const raw = localStorage.getItem(STORAGE_AGENDA);
+                return raw ? JSON.parse(raw) : [];
+            } catch { return []; }
+        }
+
+        function getEnviadas() {
+            try { return JSON.parse(localStorage.getItem(STORAGE_NOTIF_ENVIADAS) || '[]'); }
+            catch { return []; }
+        }
+        function salvarEnviadas(lista) {
+            localStorage.setItem(STORAGE_NOTIF_ENVIADAS, JSON.stringify(lista.slice(-100)));
+        }
+
+        function removerNotificacao(animeId) {
+            const lista = getNotificacoes();
+            const filtrada = lista.filter(id => id !== animeId);
+            salvarNotificacoes(filtrada);
+            showToast('Removido dos seus animes');
+            render();
+        }
+
+        /* ===================================================================
+           VERIFICAR EPISÓDIOS QUE JÁ SAÍRAM E DISPARAR NOTIFICAÇÃO
+        =================================================================== */
+        async function verificarEpisodios() {
+            if (!notificacoesAtivas()) return;
+
+            const agenda = carregarAgendaCustom();
+            const seguidos = getNotificacoes();
+            const enviadas = getEnviadas();
+            const agora = new Date();
+
+            /* Descobre dia da semana atual */
+            const dias = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
+            const diaHoje = dias[agora.getDay()];
+            const horaAtual = agora.getHours() * 60 + agora.getMinutes();
+
+            for (const item of agenda) {
+                if (!seguidos.includes(item.animeId)) continue;
+                if (item.dia !== diaHoje) continue;
+
+                /* Verifica legendado */
+                if (item.legendado && item.legendado.horario) {
+                    const [h, m] = item.legendado.horario.split(':').map(Number);
+                    const horarioMin = h * 60 + m;
+                    const chave = `${item.id}-leg-ep${item.ep}`;
+
+                    if (horaAtual >= horarioMin && !enviadas.includes(chave)) {
+                        await dispararNotificacao(item, 'legendado', item.legendado);
+                        enviadas.push(chave);
+                    }
+                }
+
+                /* Verifica dublado */
+                if (item.dublado && item.dublado.horario) {
+                    const [h, m] = item.dublado.horario.split(':').map(Number);
+                    const horarioMin = h * 60 + m;
+                    const chave = `${item.id}-dub-ep${item.ep}`;
+
+                    if (horaAtual >= horarioMin && !enviadas.includes(chave)) {
+                        await dispararNotificacao(item, 'dublado', item.dublado);
+                        enviadas.push(chave);
+                    }
+                }
+            }
+
+            salvarEnviadas(enviadas);
+        }
+
+        async function dispararNotificacao(item, tipo, info) {
+            const anime = typeof getAnime === 'function' ? getAnime(item.animeId) : null;
+            if (!anime) return;
+
+            const emojiTipo = tipo === 'legendado' ? '🟢' : '🟡';
+            const titulo = `${emojiTipo} ${anime.titulo} — Ep. ${String(item.ep).padStart(2, '0')}`;
+            const corpo = `${tipo === 'legendado' ? 'Legendado' : 'Dublado'} saiu! Já disponível na ${info.plataforma}.`;
+
+            /* Tenta enviar via service worker (mais confiável) */
+            if (swRegistration && swRegistration.active) {
+                swRegistration.active.postMessage({
+                    tipo: 'notificar',
+                    titulo: titulo,
+                    corpo: corpo,
+                    url: 'agenda.html'
+                });
+                console.log('📨 Notificação enviada via SW:', titulo);
+            } else {
+                /* Fallback: notificação direta */
+                try {
+                    new Notification(titulo, {
+                        body: corpo,
+                        icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%232b7fff"/><text x="50" y="68" font-size="52" font-family="Arial" font-weight="bold" fill="white" text-anchor="middle">AV</text></svg>'
+                    });
+                    console.log('📨 Notificação enviada direta:', titulo);
+                } catch (err) {
+                    console.error('Erro ao notificar:', err);
+                }
+            }
+        }
+
+        /* ===================================================================
+           RENDER
+        =================================================================== */
+        const DIAS_LABEL = {
+            segunda: 'Segunda', terca: 'Terça', quarta: 'Quarta',
+            quinta: 'Quinta', sexta: 'Sexta', sabado: 'Sábado', domingo: 'Domingo'
+        };
+
+        function renderStats(animesSeguidos, agenda) {
+            const grid = document.getElementById('statsGrid');
+            const totalSeguidos = animesSeguidos.length;
+
+            const hoje = new Date().getDay();
+            const ordemDias = { domingo: 0, segunda: 1, terca: 2, quarta: 3, quinta: 4, sexta: 5, sabado: 6 };
+
+            let proximoDia = null;
+            let menorDiff = 8;
+            agenda.forEach(item => {
+                if (!animesSeguidos.includes(item.animeId)) return;
+                const d = ordemDias[item.dia];
+                let diff = d - hoje;
+                if (diff < 0) diff += 7;
+                if (diff < menorDiff) {
+                    menorDiff = diff;
+                    proximoDia = item.dia;
+                }
+            });
+
+            grid.innerHTML = `
+                <div class="stat-card">
+                    <span class="stat-icon">🔔</span>
+                    <span class="stat-number">${totalSeguidos}</span>
+                    <span class="stat-label">Seguindo</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">📅</span>
+                    <span class="stat-number">${proximoDia ? DIAS_LABEL[proximoDia] : '—'}</span>
+                    <span class="stat-label">Próximo lançamento</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">📺</span>
+                    <span class="stat-number">${agenda.filter(a => animesSeguidos.includes(a.animeId)).length}</span>
+                    <span class="stat-label">Episódios na fila</span>
+                </div>
+            `;
+        }
+
+        function render() {
+            const notifs = getNotificacoes();
+            const agenda = carregarAgendaCustom();
+            const grid = document.getElementById('animesGrid');
+
+            renderStats(notifs, agenda);
+
+            if (notifs.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <span class="icon">🔔</span>
+                        <h3>Você não segue nenhum anime ainda</h3>
+                        <p>Vá até a agenda e clique em "🔔 Me avisa" nos animes que você quer ser notificado.</p>
+                        <a href="agenda.html" class="btn-explore">Ver Agenda</a>
+                    </div>
+                `;
+                return;
+            }
+
+            const cards = [];
+            notifs.forEach(animeId => {
+                const anime = typeof getAnime === 'function' ? getAnime(animeId) : null;
+                if (!anime) return;
+
+                const lancamentos = agenda.filter(a => a.animeId === animeId);
+                if (lancamentos.length === 0) return;
+
+                lancamentos.sort((a, b) => a.ep - b.ep);
+                const proximo = lancamentos[0];
+
+                const badges = [];
+                if (proximo.legendado) badges.push(`<span class="badge-small legendado">🟢 ${proximo.legendado.horario} • ${proximo.legendado.plataforma}</span>`);
+                if (proximo.dublado) badges.push(`<span class="badge-small dublado">🟡 ${proximo.dublado.horario} • ${proximo.dublado.plataforma}</span>`);
+
+                cards.push(`
+                    <div class="anime-card">
+                        <img src="${anime.img}" alt="${anime.titulo}"
+                             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 70 95%22%3E%3Crect fill=%22%231a202c%22 width=%2270%22 height=%2295%22/%3E%3C/svg%3E'">
+                        <div class="anime-info">
+                            <strong>${anime.titulo}</strong>
+                            <span class="anime-meta">📺 Ep. ${String(proximo.ep).padStart(2, '0')}</span>
+                            <span class="badge-small dia">📅 ${DIAS_LABEL[proximo.dia] || proximo.dia}</span>
+                            <div class="anime-badges">
+                                ${badges.join('')}
+                            </div>
+                            <button class="btn-remove" onclick="removerNotificacao('${animeId}')">✕ Remover</button>
+                        </div>
+                    </div>
+                `);
+            });
+
+            if (cards.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <span class="icon">📭</span>
+                        <h3>Você segue animes, mas eles ainda não estão na agenda</h3>
+                        <p>Aguarde ou peça pra alguém adicionar. 😉</p>
+                        <a href="agenda.html" class="btn-explore">Ver Agenda</a>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = cards.join('');
+        }
+
+        /* ===================================================================
+           INICIALIZAÇÃO
+        =================================================================== */
+        window.addEventListener('focus', () => {
+            render();
+            verificarEpisodios();
+        });
+
+        window.addEventListener('load', async () => {
+            swRegistration = await registrarServiceWorker();
+            atualizarBannerNotif();
+            render();
+            /* Verifica episódios a cada 60 segundos enquanto a página estiver aberta */
+            setInterval(verificarEpisodios, 60000);
+            verificarEpisodios();
+        });
+    </script>
+</body>
+</html>
