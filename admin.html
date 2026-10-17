@@ -235,8 +235,8 @@
                 const tokenResult = await user.getIdTokenResult();
                 
                 if (!tokenResult.claims.admin) {
-                    alert('Acesso negado. Área restrita para administradores.');
-                    window.location.href = 'agenda.html';
+                    alert('Acesso negado. Sua conta não tem permissão de Admin. Faça login novamente.');
+                    window.forcarLimpezaELogout(); // Chuta o invasor pra fora
                     return;
                 }
 
