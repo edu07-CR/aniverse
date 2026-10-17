@@ -6,7 +6,7 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
 });
 
-const SEU_EMAIL = "07kadurodrig@gmail.com";
+const SEU_EMAIL = "07kadurodrigues@gmail.com";
 
 async function tornarAdmin() {
     try {
