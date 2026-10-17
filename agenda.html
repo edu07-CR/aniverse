@@ -104,4 +104,322 @@
         .btn-notify-small:hover { border-color: var(--primary); color: var(--primary); }
         .btn-notify-small.ativo { background: rgba(139, 92, 246, 0.15); border-color: var(--primary); color: var(--primary); }
         .no-anime { background-color: var(--bg-2); border: 1px dashed var(--border-2); border-radius: 10px; padding: 40px 20px; text-align: center; color: var(--text-muted); font-size: 14px; }
-        .no-anime span { font-size: 32px; display: block; margin
+        .no-anime span { font-size: 32px; display: block; margin-bottom: 10px; }
+        .skeleton { background: linear-gradient(90deg, var(--bg-2) 25%, #1f2733 50%, var(--bg-2) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 12px; height: 140px; }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background: var(--bg-2); border: 1px solid var(--border-2); border-left: 4px solid var(--primary); padding: 12px 18px; border-radius: 8px; font-size: 13px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); animation: slideIn 0.3s ease; min-width: 220px; }
+        .toast.success { border-left-color: var(--success); }
+        .toast.error { border-left-color: var(--danger); }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        @media (max-width: 900px) { .menu-toggle { display: block; } nav { display: none; width: 100%; flex-direction: column; gap: 10px; padding-top: 10px; border-top: 1px solid var(--border); } nav.open { display: flex; } nav a.active::after { display: none; } nav a.active { color: var(--primary); } .search-bar { width: 100%; } .search-bar:focus { width: 100%; } }
+        @media (max-width: 640px) { header { padding: 12px 15px; } .schedule-item { flex-direction: column; } .schedule-info { flex-direction: row; } .schedule-actions { flex-direction: row; } .btn-watch-small, .btn-notify-small { flex: 1; } .schedule-img { width: 70px; height: 95px; } .page-title { font-size: 20px; } .day-btn { padding: 8px 14px; font-size: 13px; } .filters-bar { flex-direction: column; align-items: flex-start; } }
+        @media (max-width: 480px) { .brand-name, .badge-tag { display: none; } .container { padding: 0 12px; } .schedule-title { font-size: 14px; } .legenda { font-size: 11px; gap: 12px; } }
+        button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <div class="logo">AV</div>
+            <div class="brand-name">AniVerse</div>
+            <span class="badge-tag">Fã-Clube</span>
+        </div>
+        <button class="menu-toggle" onclick="toggleMenu()" aria-label="Abrir menu">☰</button>
+        <nav id="mainNav">
+            <a href="agenda.html" class="active">📅 Agenda</a>
+            <a href="meus-animes.html">🔔 Meus Animes</a>
+            <a href="admin.html" class="admin-link">⚙️ Admin</a>
+        </nav>
+        <div class="search-user">
+            <input type="text" class="search-bar" placeholder="Buscar animes...">
+            <div class="user-menu-container">
+                <div class="user-profile" onclick="toggleUserMenu()">
+                    <div class="user-avatar" id="headerAvatar">AV</div>
+                    <strong id="headerUserName">Carregando...</strong>
+                </div>
+                <div class="user-dropdown" id="userDropdown">
+                    <div class="user-email" id="headerUserEmail"></div>
+                    <div style="padding: 8px 12px 0; font-size: 11px; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Seu Avatar:</div>
+                    <div class="emoji-grid" id="emojiGrid">
+                        <button class="emoji-btn selected" onclick="salvarAvatar('AV')">AV</button>
+                        <button class="emoji-btn" onclick="salvarAvatar('🦊')">🦊</button>
+                        <button class="emoji-btn" onclick="salvarAvatar('🐱')">🐱</button>
+                        <button class="emoji-btn" onclick="salvarAvatar('🐼')">🐼</button>
+                        <button class="emoji-btn" onclick="salvarAvatar('🔥')">🔥</button>
+                    </div>
+                    <button class="btn-dropdown" style="margin-top: 5px;" onclick="sair()">🚪 Sair</button>
+                    <button class="btn-dropdown danger" onclick="deletarConta()">🗑️ Excluir Conta</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1 class="page-title">📅 Agenda de Lançamentos</h1>
+        <div class="temporada-info" id="temporadaInfo">
+            <span id="temporadaTexto">🍂 Outono 2026</span>
+            <span class="contador" id="temporadaContador">0 animes</span>
+        </div>
+        <p class="page-subtitle">Acompanhe quando saem os episódios <strong>legendados</strong> e <strong>dublados</strong> no Brasil.</p>
+
+        <div class="filters-bar">
+            <div class="filters-bar-left">
+                <span class="filters-label">Filtrar:</span>
+                <div class="idioma-filters" id="idiomaFilters">
+                    <button class="idioma-btn active" data-idioma="todos"><span class="dot"></span> Todos</button>
+                    <button class="idioma-btn" data-idioma="legendado"><span class="dot"></span> Legendado</button>
+                    <button class="idioma-btn" data-idioma="dublado"><span class="dot"></span> Dublado</button>
+                </div>
+            </div>
+            <div class="api-status">Agenda atualizada</div>
+        </div>
+
+        <div class="days-tabs" id="daysTabs">
+            <button class="day-btn" data-dia="segunda">Segunda-feira</button>
+            <button class="day-btn" data-dia="terca">Terça-feira</button>
+            <button class="day-btn" data-dia="quarta">Quarta-feira</button>
+            <button class="day-btn" data-dia="quinta">Quinta-feira</button>
+            <button class="day-btn" data-dia="sexta">Sexta-feira</button>
+            <button class="day-btn" data-dia="sabado">Sábado</button>
+            <button class="day-btn" data-dia="domingo">Domingo</button>
+        </div>
+
+        <div class="legenda">
+            <div class="legenda-item"><span class="legenda-dot legendado"></span> Legendado</div>
+            <div class="legenda-item"><span class="legenda-dot dublado"></span> Dublado</div>
+            <div class="legenda-item"><span class="legenda-dot em-breve"></span> Em breve</div>
+        </div>
+
+        <div class="schedule-list" id="scheduleList"></div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut, deleteUser } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import { getFirestore, doc, deleteDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyCOdEgBjNHqlEl_YbH93i3VBasfss5QeTs", authDomain: "aniverse-fae73.firebaseapp.com", projectId: "aniverse-fae73", storageBucket: "aniverse-fae73.firebasestorage.app", messagingSenderId: "699188842665", appId: "1:699188842665:web:f29f6cbbc5b0c8a61c59b8" };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        window.forcarLimpezaELogout = () => {
+            localStorage.clear();
+            sessionStorage.clear();
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(registrations => {
+                    for(let r of registrations) r.unregister();
+                });
+            }
+            window.location.href = 'index.html?logout=true';
+        };
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const nome = user.displayName || user.email.split('@')[0];
+                document.getElementById('headerUserName').textContent = nome;
+                document.getElementById('headerUserEmail').textContent = user.email;
+                window.currentUser = user;
+
+                const docRef = doc(db, "usuarios", user.uid);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists() && docSnap.data().avatar) atualizarAvatarUI(docSnap.data().avatar);
+                else atualizarAvatarUI('AV');
+            } else {
+                window.forcarLimpezaELogout();
+            }
+        });
+
+        function atualizarAvatarUI(avatar) {
+            const el = document.getElementById('headerAvatar');
+            el.innerHTML = avatar;
+            el.style.background = avatar === 'AV' ? 'var(--primary)' : 'var(--bg-3)';
+            document.querySelectorAll('.emoji-btn').forEach(btn => {
+                if(btn.textContent.trim() === avatar) btn.classList.add('selected');
+                else btn.classList.remove('selected');
+            });
+        }
+
+        window.salvarAvatar = async (avatar) => {
+            if (!window.currentUser) return;
+            try {
+                await setDoc(doc(db, "usuarios", window.currentUser.uid), { avatar: avatar }, { merge: true });
+                atualizarAvatarUI(avatar);
+            } catch (error) {}
+        };
+
+        window.toggleUserMenu = () => { document.getElementById('userDropdown').classList.toggle('open'); };
+        document.addEventListener('click', (e) => {
+            const container = document.querySelector('.user-menu-container');
+            if (container && !container.contains(e.target)) document.getElementById('userDropdown').classList.remove('open');
+        });
+        window.sair = async () => { await signOut(auth); window.forcarLimpezaELogout(); };
+        window.deletarConta = async () => {
+            if (confirm('Tem certeza absoluta? Isso apagará sua conta e todos os seus dados.')) {
+                const user = auth.currentUser;
+                if (user) {
+                    try {
+                        await deleteDoc(doc(db, "usuarios", user.uid));
+                        await deleteUser(user);
+                        alert('Sua conta foi excluída.');
+                        window.forcarLimpezaELogout();
+                    } catch (error) { alert('Erro ao excluir.'); }
+                }
+            }
+        };
+    </script>
+
+    <script src="animes.js"></script>
+
+    <script>
+        const STORAGE_AGENDA = 'aniverse_agenda_custom';
+        function toggleMenu() { document.getElementById('mainNav').classList.toggle('open'); }
+        function showToast(msg, tipo = '') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast ' + tipo; toast.textContent = msg;
+            container.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; setTimeout(() => toast.remove(), 300); }, 3000);
+        }
+
+        const PLATAFORMAS_LINKS = {
+            crunchyroll: { nome: 'Crunchyroll', gerarLink: (a) => `https://www.crunchyroll.com/pt-br/search?q=${encodeURIComponent(a.titulo)}` },
+            netflix: { nome: 'Netflix', gerarLink: (a) => `https://www.netflix.com/search?q=${encodeURIComponent(a.titulo)}` },
+            amazon: { nome: 'Prime Video', gerarLink: (a) => `https://www.amazon.com.br/s?k=${encodeURIComponent(a.titulo)}` },
+            hidive: { nome: 'HIDIVE', gerarLink: (a) => `https://www.hidive.com/search?q=${encodeURIComponent(a.titulo)}` }
+        };
+
+        // AINDA LÊ DO LOCALSTORAGE, MAS LOGO MUDAREMOS PARA O FIRESTORE
+        function carregarAgendaCustom() { try { const raw = localStorage.getItem(STORAGE_AGENDA); return raw ? JSON.parse(raw) : []; } catch { return []; } }
+        function agruparPorDia(lista) {
+            const grupos = { segunda: [], terca: [], quarta: [], quinta: [], sexta: [], sabado: [], domingo: [] };
+            lista.forEach(item => { if (grupos[item.dia]) grupos[item.dia].push(item); });
+            return grupos;
+        }
+
+        let idiomaFiltro = 'todos';
+        function getDiaAtual() { const dias = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado']; return dias[new Date().getDay()]; }
+        function marcarHoje() {
+            const diaHoje = getDiaAtual();
+            document.querySelectorAll('.day-btn').forEach(btn => { if (btn.dataset.dia === diaHoje && !btn.querySelector('.today-badge')) btn.innerHTML += ' <span class="today-badge">HOJE</span>'; });
+        }
+        function mostrarSkeleton() { document.getElementById('scheduleList').innerHTML = '<div class="skeleton"></div>'.repeat(3); }
+
+        function renderLancamentos(lancamento) {
+            const badges = [];
+            if (lancamento.legendado) badges.push(`<div class="lancamento-badge legendado"><span class="idioma-dot"></span><span>Legendado</span><span class="horario">${lancamento.legendado.horario}</span><span class="plataforma">• ${PLATAFORMAS_LINKS[lancamento.legendado.plataforma]?.nome || lancamento.legendado.plataforma}</span></div>`);
+            else badges.push(`<div class="lancamento-badge em-breve"><span class="idioma-dot"></span><span>Legendado • em breve</span></div>`);
+            
+            if (lancamento.dublado) badges.push(`<div class="lancamento-badge dublado"><span class="idioma-dot"></span><span>Dublado</span><span class="horario">${lancamento.dublado.horario}</span><span class="plataforma">• ${PLATAFORMAS_LINKS[lancamento.dublado.plataforma]?.nome || lancamento.dublado.plataforma}</span></div>`);
+            else badges.push(`<div class="lancamento-badge em-breve"><span class="idioma-dot"></span><span>Dublado • em breve</span></div>`);
+            return badges.join('');
+        }
+
+        function passaFiltroIdioma(lancamento) {
+            if (idiomaFiltro === 'todos') return true;
+            if (idiomaFiltro === 'legendado') return !!lancamento.legendado;
+            if (idiomaFiltro === 'dublado') return !!lancamento.dublado;
+            return true;
+        }
+
+        function filtrarDia(dia, elementoBotao) {
+            document.querySelectorAll('.day-btn').forEach(btn => btn.classList.remove('active'));
+            if (elementoBotao) elementoBotao.classList.add('active');
+            mostrarSkeleton();
+
+            setTimeout(() => {
+                const agenda = carregarAgendaCustom();
+                const grupos = agruparPorDia(agenda);
+                const lista = grupos[dia] || [];
+                const listaFiltrada = lista.filter(passaFiltroIdioma);
+                const container = document.getElementById('scheduleList');
+                container.innerHTML = '';
+
+                if (agenda.length === 0) {
+                    container.innerHTML = `<div class="no-anime"><span>📭</span>Nenhum anime cadastrado ainda.<br><small style="color: var(--text-dim); font-size: 12px; margin-top: 8px; display: block;">Acesse <a href="admin.html" style="color: var(--primary);">admin.html</a> para adicionar.</small></div>`;
+                    return;
+                }
+
+                if (listaFiltrada.length === 0) {
+                    let mensagem = 'Nenhum lançamento agendado para este dia.';
+                    if (idiomaFiltro === 'legendado') mensagem = 'Nenhum lançamento legendado para este dia.';
+                    if (idiomaFiltro === 'dublado') mensagem = 'Nenhum lançamento dublado para este dia.';
+                    container.innerHTML = `<div class="no-anime"><span>💤</span>${mensagem}<br><small style="color: var(--text-dim); font-size: 12px;">Tente outro dia ou outro filtro.</small></div>`;
+                    return;
+                }
+
+                listaFiltrada.forEach(lancamento => {
+                    const anime = typeof getAnime === 'function' ? getAnime(lancamento.animeId) : null;
+                    if (!anime) return;
+
+                    let plataformaBotao = 'crunchyroll';
+                    if (lancamento.legendado) plataformaBotao = lancamento.legendado.plataforma;
+                    else if (lancamento.dublado) plataformaBotao = lancamento.dublado.plataforma;
+
+                    const linkAssistir = PLATAFORMAS_LINKS[plataformaBotao]?.gerarLink(anime) || '#';
+                    const ativo = isNotificacaoAtiva(anime.id);
+
+                    const item = document.createElement('div');
+                    item.className = 'schedule-item';
+                    item.innerHTML = `
+                        <div class="schedule-info">
+                            <img src="${anime.img}" class="schedule-img" alt="Capa de ${anime.titulo}" loading="lazy" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 80 110%22%3E%3Crect fill=%22%231a202c%22 width=%2280%22 height=%22110%22/%3E%3C/svg%3E'">
+                            <div class="schedule-details">
+                                <div class="schedule-title">${anime.titulo}</div>
+                                <div class="schedule-ep">📺 Episódio ${String(lancamento.ep).padStart(2, '0')}</div>
+                                <div class="lancamentos-list">${renderLancamentos(lancamento)}</div>
+                            </div>
+                        </div>
+                        <div class="schedule-actions">
+                            <a href="${linkAssistir}" target="_blank" rel="noopener noreferrer" class="btn-watch-small">▶ Assistir</a>
+                            <button class="btn-notify-small ${ativo ? 'ativo' : ''}" onclick="toggleNotificacao('${anime.id}', event)">🔔 ${ativo ? 'Ativado' : 'Me avisa'}</button>
+                        </div>
+                    `;
+                    container.appendChild(item);
+                });
+                showToast(`📅 ${listaFiltrada.length} lançamento(s) para ${dia}`);
+            }, 250);
+        }
+
+        function getNotificacoes() { try { return JSON.parse(localStorage.getItem('aniverse_notificacoes') || '[]'); } catch { return []; } }
+        function salvarNotificacoes(lista) { localStorage.setItem('aniverse_notificacoes', JSON.stringify(lista)); }
+        function isNotificacaoAtiva(animeId) { return getNotificacoes().includes(animeId); }
+
+        window.toggleNotificacao = (animeId, event) => {
+            event.stopPropagation();
+            const lista = getNotificacoes();
+            const idx = lista.indexOf(animeId);
+            const btn = event.currentTarget;
+            if (idx >= 0) { lista.splice(idx, 1); btn.classList.remove('ativo'); btn.innerHTML = '🔔 Me avisa'; showToast('Notificação desativada'); }
+            else { lista.push(animeId); btn.classList.add('ativo'); btn.innerHTML = '🔔 Ativado'; showToast('✅ Você será avisado!', 'success'); }
+            salvarNotificacoes(lista);
+        };
+
+        function renderTemporada() { if (typeof TEMPORADA_ATUAL !== 'undefined') document.getElementById('temporadaTexto').textContent = `${TEMPORADA_ATUAL.emoji} ${TEMPORADA_ATUAL.nome}`; }
+        function atualizarContadorTemporada() {
+            if (typeof ANIMES_LISTA === 'undefined') return;
+            const agenda = carregarAgendaCustom();
+            const unicos = new Set(agenda.map(a => a.animeId));
+            document.getElementById('temporadaContador').textContent = `${unicos.size} anime${unicos.size !== 1 ? 's' : ''} na agenda`;
+        }
+
+        document.getElementById('daysTabs').addEventListener('click', e => { const btn = e.target.closest('.day-btn'); if (!btn) return; filtrarDia(btn.dataset.dia, btn); });
+        document.getElementById('idiomaFilters').addEventListener('click', e => {
+            const btn = e.target.closest('.idioma-btn'); if (!btn) return;
+            document.querySelectorAll('.idioma-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active');
+            idiomaFiltro = btn.dataset.idioma;
+            const diaAtivo = document.querySelector('.day-btn.active'); if (diaAtivo) filtrarDia(diaAtivo.dataset.dia, diaAtivo);
+        });
+
+        window.addEventListener('focus', () => { const diaAtivo = document.querySelector('.day-btn.active'); if (diaAtivo) filtrarDia(diaAtivo.dataset.dia, diaAtivo); atualizarContadorTemporada(); });
+        window.addEventListener('load', () => { renderTemporada(); marcarHoje(); atualizarContadorTemporada(); const diaHoje = getDiaAtual(); filtrarDia(diaHoje, document.querySelector(`.day-btn[data-dia="${diaHoje}"]`)); });
+    </script>
+</body>
+</html>
