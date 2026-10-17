@@ -17,13 +17,7 @@
         }
         body { background-color: var(--bg); color: var(--text); padding-bottom: 50px; min-height: 100vh; }
 
-        header {
-            background-color: var(--bg-2); padding: 15px 30px;
-            display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 1px solid var(--border);
-            position: sticky; top: 0; z-index: 100;
-            flex-wrap: wrap; gap: 15px;
-        }
+        header { background-color: var(--bg-2); padding: 15px 30px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 15px; }
         .logo-area { display: flex; align-items: center; gap: 10px; }
         .logo { background-color: var(--primary); color: white; font-weight: bold; padding: 5px 10px; border-radius: 6px; font-size: 18px; }
         .brand-name { font-size: 20px; font-weight: bold; }
@@ -31,17 +25,21 @@
         .btn-voltar { background: var(--bg-3); color: var(--text-muted); border: 1px solid var(--border-2); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: bold; text-decoration: none; transition: all 0.2s; }
         .btn-voltar:hover { border-color: var(--primary); color: var(--primary); }
 
+        /* MENU DE USUÁRIO */
+        .user-menu-container { position: relative; }
+        .user-profile { background-color: var(--bg-3); padding: 6px 12px; border-radius: 20px; display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; transition: background 0.2s; border: 1px solid var(--border-2); }
+        .user-profile:hover { background: #252d3d; }
+        .user-dropdown { position: absolute; top: 100%; right: 0; margin-top: 8px; background: var(--bg-2); border: 1px solid var(--border-2); border-radius: 8px; padding: 8px; min-width: 200px; display: none; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 101; }
+        .user-dropdown.open { display: block; }
+        .user-email { padding: 8px 12px; font-size: 12px; color: var(--text-muted); border-bottom: 1px solid var(--border); margin-bottom: 5px; word-break: break-all; }
+        .btn-dropdown { display: block; width: 100%; text-align: left; background: transparent; color: var(--text); border: none; padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; transition: background 0.2s; }
+        .btn-dropdown:hover { background: var(--bg-3); }
+        .btn-dropdown.danger { color: var(--danger); }
+        .btn-dropdown.danger:hover { background: rgba(239, 68, 68, 0.1); }
+
         .container { max-width: 900px; margin: 20px auto; padding: 0 20px; }
         .page-title { font-size: 24px; font-weight: bold; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
         .page-subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 25px; }
-
-        .temporada-badge {
-            display: inline-flex; align-items: center; gap: 8px;
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(168, 85, 247, 0.1));
-            border: 1px solid var(--primary); border-radius: 20px;
-            padding: 6px 16px; font-size: 13px; font-weight: bold;
-            color: #d8b4fe; margin-bottom: 20px;
-        }
 
         .section-card { background: var(--bg-2); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
         .section-card h3 { font-size: 18px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
@@ -50,24 +48,17 @@
         .form-group label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 6px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
         .form-group select, .form-group input { width: 100%; background: var(--bg-3); border: 1px solid var(--border-2); border-radius: 8px; padding: 10px 14px; color: white; font-size: 14px; outline: none; font-family: inherit; transition: border-color 0.2s; }
         .form-group select:focus, .form-group input:focus { border-color: var(--primary); }
-
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         @media (max-width: 500px) { .form-row { grid-template-columns: 1fr; } }
-
         .checkbox-row { display: flex; align-items: center; gap: 8px; padding: 10px; background: var(--bg-3); border-radius: 8px; border: 1px solid var(--border-2); margin-bottom: 10px; cursor: pointer; }
         .checkbox-row input { width: auto; cursor: pointer; }
 
         .btn-primary { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 14px; transition: background 0.2s, transform 0.2s; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); }
-
         .btn-danger { background: var(--danger); color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; transition: all 0.2s; }
         .btn-danger:hover { background: #dc2626; }
-
         .btn-edit { background: var(--warning); color: white; border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px; transition: all 0.2s; }
         .btn-edit:hover { background: #d97706; }
-
-        .btn-temporada { background: var(--accent); color: #0b0e14; border: none; padding: 10px 18px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
-        .btn-temporada:hover { background: #0ea5e9; }
 
         .item-card { background: var(--bg-3); border: 1px solid var(--border-2); border-radius: 10px; padding: 12px; margin-bottom: 10px; display: flex; gap: 12px; align-items: center; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
@@ -76,10 +67,8 @@
         .item-info strong { display: block; font-size: 14px; margin-bottom: 4px; }
         .item-info small { color: var(--text-muted); font-size: 12px; }
         .item-actions { display: flex; gap: 6px; flex-shrink: 0; }
-
         .empty-state { text-align: center; padding: 30px 15px; color: var(--text-muted); font-size: 14px; border: 1px dashed var(--border-2); border-radius: 8px; }
         .empty-state span { display: block; font-size: 32px; margin-bottom: 8px; }
-
         .days-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; scrollbar-width: thin; }
         .days-tabs::-webkit-scrollbar { height: 5px; }
         .days-tabs::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 3px; }
@@ -95,12 +84,9 @@
         @media (max-width: 640px) {
             header { padding: 12px 15px; }
             .container { padding: 0 12px; }
-            .brand-name { font-size: 16px; }
-            .page-title { font-size: 20px; }
             .item-card { flex-wrap: wrap; }
             .item-actions { width: 100%; justify-content: flex-end; }
         }
-
         button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
     </style>
 </head>
@@ -112,26 +98,32 @@
             <div class="brand-name">AniVerse</div>
             <span class="admin-badge">ADMIN</span>
         </div>
-        <a href="agenda.html" class="btn-voltar">← Ver Agenda</a>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <a href="agenda.html" class="btn-voltar">← Voltar para Agenda</a>
+            <div class="user-menu-container">
+                <div class="user-profile" onclick="toggleUserMenu()">
+                    <span>🦊</span>
+                    <strong id="headerUserName">Carregando...</strong>
+                </div>
+                <div class="user-dropdown" id="userDropdown">
+                    <div class="user-email" id="headerUserEmail"></div>
+                    <button class="btn-dropdown" onclick="sair()">🚪 Sair</button>
+                    <button class="btn-dropdown danger" onclick="deletarConta()">🗑️ Excluir Conta</button>
+                </div>
+            </div>
+        </div>
     </header>
 
     <div class="container">
         <h1 class="page-title">⚙️ Painel de Administração</h1>
         <p class="page-subtitle">Adicione, edite ou remova animes da agenda sem mexer em código.</p>
 
-        <div class="temporada-badge" id="temporadaBadge">
-            🍂 Outono 2026
-        </div>
-
-        <!-- FORMULÁRIO -->
         <div class="section-card">
             <h3 id="formTitulo">➕ Adicionar Anime na Agenda</h3>
-
             <div class="form-group">
                 <label for="inputAnime">Anime</label>
                 <select id="inputAnime" onchange="preencherAutomatico()"></select>
             </div>
-
             <div class="form-row">
                 <div class="form-group">
                     <label for="inputDia">Dia da semana</label>
@@ -145,7 +137,6 @@
                         <option value="domingo">Domingo</option>
                     </select>
                 </div>
-
                 <div class="form-group">
                     <label for="inputEp">Episódio</label>
                     <input type="number" id="inputEp" min="1" value="1">
@@ -158,17 +149,10 @@
             </label>
             <div id="camposLegendado">
                 <div class="form-row">
-                    <div class="form-group">
-                        <label for="inputHorarioLeg">Horário</label>
-                        <input type="time" id="inputHorarioLeg" value="14:00">
-                    </div>
-                    <div class="form-group">
-                        <label for="inputPlataformaLeg">Plataforma</label>
+                    <div class="form-group"><label>Horário</label><input type="time" id="inputHorarioLeg" value="14:00"></div>
+                    <div class="form-group"><label>Plataforma</label>
                         <select id="inputPlataformaLeg">
-                            <option value="crunchyroll">Crunchyroll</option>
-                            <option value="netflix">Netflix</option>
-                            <option value="amazon">Amazon Prime</option>
-                            <option value="hidive">HIDIVE</option>
+                            <option value="crunchyroll">Crunchyroll</option><option value="netflix">Netflix</option><option value="amazon">Amazon Prime</option><option value="hidive">HIDIVE</option>
                         </select>
                     </div>
                 </div>
@@ -180,34 +164,21 @@
             </label>
             <div id="camposDublado">
                 <div class="form-row">
-                    <div class="form-group">
-                        <label for="inputHorarioDub">Horário</label>
-                        <input type="time" id="inputHorarioDub" value="16:00">
-                    </div>
-                    <div class="form-group">
-                        <label for="inputPlataformaDub">Plataforma</label>
+                    <div class="form-group"><label>Horário</label><input type="time" id="inputHorarioDub" value="16:00"></div>
+                    <div class="form-group"><label>Plataforma</label>
                         <select id="inputPlataformaDub">
-                            <option value="crunchyroll">Crunchyroll</option>
-                            <option value="netflix">Netflix</option>
-                            <option value="amazon">Amazon Prime</option>
-                            <option value="hidive">HIDIVE</option>
+                            <option value="crunchyroll">Crunchyroll</option><option value="netflix">Netflix</option><option value="amazon">Amazon Prime</option><option value="hidive">HIDIVE</option>
                         </select>
                     </div>
                 </div>
             </div>
 
-            <button class="btn-primary" onclick="salvarAnime()" id="btnSalvar">
-                💾 Salvar
-            </button>
-            <button class="btn-danger" onclick="cancelarEdicao()" id="btnCancelar" style="display: none; width: 100%; margin-top: 8px; padding: 12px;">
-                ✕ Cancelar Edição
-            </button>
+            <button class="btn-primary" onclick="salvarAnime()" id="btnSalvar">💾 Salvar</button>
+            <button class="btn-danger" onclick="cancelarEdicao()" id="btnCancelar" style="display: none; width: 100%; margin-top: 8px; padding: 12px;">✕ Cancelar Edição</button>
         </div>
 
-        <!-- LISTA -->
         <div class="section-card">
             <h3>📋 Animes na Agenda</h3>
-
             <div class="days-tabs" id="daysTabs">
                 <button class="day-btn active" data-dia="todos">Todos</button>
                 <button class="day-btn" data-dia="segunda">Segunda</button>
@@ -218,15 +189,71 @@
                 <button class="day-btn" data-dia="sabado">Sábado</button>
                 <button class="day-btn" data-dia="domingo">Domingo</button>
             </div>
-
             <div id="listaItens"></div>
         </div>
     </div>
 
     <div class="toast-container" id="toastContainer"></div>
 
-    <script src="animes.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut, deleteUser } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import { getFirestore, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+        const firebaseConfig = {
+            apiKey: "AIzaSyCOdEgBjNHqlEl_YbH93i3VBasfss5QeTs",
+            authDomain: "aniverse-fae73.firebaseapp.com",
+            projectId: "aniverse-fae73",
+            storageBucket: "aniverse-fae73.firebasestorage.app",
+            messagingSenderId: "699188842665",
+            appId: "1:699188842665:web:f29f6cbbc5b0c8a61c59b8"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // AQUI VOCÊ PROTEGE A PÁGINA: Só entra se for seu e-mail!
+                // Troque o e-mail abaixo pelo seu e-mail de admin
+                if (user.email !== '07kadurodrig@gmail.com') {
+                    alert('Acesso negado. Área restrita.');
+                    window.location.href = 'agenda.html';
+                    return;
+                }
+
+                const nome = user.displayName || user.email.split('@')[0];
+                document.getElementById('headerUserName').textContent = nome;
+                document.getElementById('headerUserEmail').textContent = user.email;
+                window.currentUser = user;
+            } else {
+                window.location.href = 'index.html';
+            }
+        });
+
+        window.toggleUserMenu = () => { document.getElementById('userDropdown').classList.toggle('open'); };
+        document.addEventListener('click', (e) => {
+            const container = document.querySelector('.user-menu-container');
+            if (container && !container.contains(e.target)) document.getElementById('userDropdown').classList.remove('open');
+        });
+        window.sair = async () => { await signOut(auth); window.location.href = 'index.html'; };
+        window.deletarConta = async () => {
+            if (confirm('Tem certeza absoluta? Isso apagará sua conta e todos os seus dados.')) {
+                const user = auth.currentUser;
+                if (user) {
+                    try {
+                        await deleteDoc(doc(db, "usuarios", user.uid));
+                        await deleteUser(user);
+                        alert('Sua conta foi excluída.');
+                        window.location.href = 'index.html';
+                    } catch (error) { alert('Erro ao excluir. Faça login novamente.'); }
+                }
+            }
+        };
+    </script>
+
+    <script src="animes.js"></script>
     <script>
         const STORAGE_AGENDA = 'aniverse_agenda_custom';
         let editandoId = null;
@@ -238,53 +265,27 @@
             toast.className = 'toast ' + tipo;
             toast.textContent = msg;
             container.appendChild(toast);
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transition = 'opacity 0.3s';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
+            setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
         function carregarAgenda() {
-            try {
-                const raw = localStorage.getItem(STORAGE_AGENDA);
-                return raw ? JSON.parse(raw) : [];
-            } catch { return []; }
+            try { const raw = localStorage.getItem(STORAGE_AGENDA); return raw ? JSON.parse(raw) : []; } catch { return []; }
         }
-
-        function salvarAgenda(lista) {
-            localStorage.setItem(STORAGE_AGENDA, JSON.stringify(lista));
-        }
+        function salvarAgenda(lista) { localStorage.setItem(STORAGE_AGENDA, JSON.stringify(lista)); }
 
         function preencherSelectAnimes() {
             const select = document.getElementById('inputAnime');
-            if (typeof ANIMES_LISTA === 'undefined') {
-                select.innerHTML = '<option value="">Erro: animes.js não carregou</option>';
-                return;
-            }
-            select.innerHTML = ANIMES_LISTA.map(a =>
-                `<option value="${a.id}">${a.titulo}</option>`
-            ).join('');
+            if (typeof ANIMES_LISTA === 'undefined') { select.innerHTML = '<option value="">Erro: animes.js não carregou</option>'; return; }
+            select.innerHTML = ANIMES_LISTA.map(a => `<option value="${a.id}">${a.titulo}</option>`).join('');
         }
 
-        /* Preenche automaticamente quando escolhe um anime */
         function preencherAutomatico() {
             const animeId = document.getElementById('inputAnime').value;
             if (typeof ANIMES_DB === 'undefined' || !ANIMES_DB[animeId]) return;
             const anime = ANIMES_DB[animeId];
-
-            /* Se o anime tem diaSemana, preenche */
-            if (anime.diaSemana) {
-                document.getElementById('inputDia').value = anime.diaSemana;
-            }
-            /* Se tem horário padrão, preenche */
-            if (anime.horarioLegendado) {
-                document.getElementById('inputHorarioLeg').value = anime.horarioLegendado;
-            }
-            if (anime.horarioDublado) {
-                document.getElementById('inputHorarioDub').value = anime.horarioDublado;
-            }
-            /* Se tem plataforma, preenche os dois */
+            if (anime.diaSemana) document.getElementById('inputDia').value = anime.diaSemana;
+            if (anime.horarioLegendado) document.getElementById('inputHorarioLeg').value = anime.horarioLegendado;
+            if (anime.horarioDublado) document.getElementById('inputHorarioDub').value = anime.horarioDublado;
             if (anime.plataforma) {
                 document.getElementById('inputPlataformaLeg').value = anime.plataforma;
                 document.getElementById('inputPlataformaDub').value = anime.plataforma;
@@ -301,44 +302,26 @@
             const animeId = document.getElementById('inputAnime').value;
             const dia = document.getElementById('inputDia').value;
             const ep = parseInt(document.getElementById('inputEp').value) || 1;
-
             if (!animeId) { showToast('⚠️ Selecione um anime.', 'error'); return; }
 
             const chkLeg = document.getElementById('chkLegendado').checked;
             const chkDub = document.getElementById('chkDublado').checked;
+            if (!chkLeg && !chkDub) { showToast('⚠️ Marque pelo menos uma versão.', 'error'); return; }
 
-            if (!chkLeg && !chkDub) {
-                showToast('⚠️ Marque pelo menos uma versão.', 'error');
-                return;
-            }
-
-            const legendado = chkLeg ? {
-                horario: document.getElementById('inputHorarioLeg').value || '14:00',
-                plataforma: document.getElementById('inputPlataformaLeg').value
-            } : null;
-
-            const dublado = chkDub ? {
-                horario: document.getElementById('inputHorarioDub').value || '16:00',
-                plataforma: document.getElementById('inputPlataformaDub').value
-            } : null;
+            const legendado = chkLeg ? { horario: document.getElementById('inputHorarioLeg').value || '14:00', plataforma: document.getElementById('inputPlataformaLeg').value } : null;
+            const dublado = chkDub ? { horario: document.getElementById('inputHorarioDub').value || '16:00', plataforma: document.getElementById('inputPlataformaDub').value } : null;
 
             const agenda = carregarAgenda();
 
             if (editandoId) {
                 const idx = agenda.findIndex(item => item.id === editandoId);
-                if (idx >= 0) {
-                    agenda[idx] = { ...agenda[idx], animeId, dia, ep, legendado, dublado };
-                }
+                if (idx >= 0) { agenda[idx] = { ...agenda[idx], animeId, dia, ep, legendado, dublado }; }
                 showToast('✅ Anime atualizado!', 'success');
                 cancelarEdicao();
             } else {
-                const novo = {
-                    id: 'ag_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
-                    animeId, dia, ep, legendado, dublado,
-                    criadoEm: Date.now()
-                };
+                const novo = { id: 'ag_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6), animeId, dia, ep, legendado, dublado, criadoEm: Date.now() };
                 agenda.push(novo);
-                showToast('✅ Anime adicionado na agenda!', 'success');
+                showToast('✅ Anime adicionado!', 'success');
             }
 
             salvarAgenda(agenda);
@@ -356,8 +339,7 @@
             document.getElementById('inputHorarioDub').value = '16:00';
             document.getElementById('inputPlataformaLeg').value = 'crunchyroll';
             document.getElementById('inputPlataformaDub').value = 'crunchyroll';
-            toggleCampos('legendado');
-            toggleCampos('dublado');
+            toggleCampos('legendado'); toggleCampos('dublado');
         }
 
         function cancelarEdicao() {
@@ -379,23 +361,13 @@
             document.getElementById('inputEp').value = item.ep;
             document.getElementById('chkLegendado').checked = !!item.legendado;
             document.getElementById('chkDublado').checked = !!item.dublado;
-
-            if (item.legendado) {
-                document.getElementById('inputHorarioLeg').value = item.legendado.horario;
-                document.getElementById('inputPlataformaLeg').value = item.legendado.plataforma;
-            }
-            if (item.dublado) {
-                document.getElementById('inputHorarioDub').value = item.dublado.horario;
-                document.getElementById('inputPlataformaDub').value = item.dublado.plataforma;
-            }
-
-            toggleCampos('legendado');
-            toggleCampos('dublado');
+            if (item.legendado) { document.getElementById('inputHorarioLeg').value = item.legendado.horario; document.getElementById('inputPlataformaLeg').value = item.legendado.plataforma; }
+            if (item.dublado) { document.getElementById('inputHorarioDub').value = item.dublado.horario; document.getElementById('inputPlataformaDub').value = item.dublado.plataforma; }
+            toggleCampos('legendado'); toggleCampos('dublado');
 
             document.getElementById('formTitulo').textContent = '✏️ Editando Anime';
             document.getElementById('btnSalvar').innerHTML = '💾 Salvar Alterações';
             document.getElementById('btnCancelar').style.display = 'flex';
-
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -411,19 +383,11 @@
         function renderLista() {
             const agenda = carregarAgenda();
             const container = document.getElementById('listaItens');
-
             let filtrada = agenda;
-            if (diaFiltroAtual !== 'todos') {
-                filtrada = agenda.filter(x => x.dia === diaFiltroAtual);
-            }
+            if (diaFiltroAtual !== 'todos') { filtrada = agenda.filter(x => x.dia === diaFiltroAtual); }
 
             if (filtrada.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <span>📭</span>
-                        Nenhum anime nesse filtro ainda.<br>
-                        <small style="color: var(--text-dim); font-size: 12px;">Adicione pelo formulário acima.</small>
-                    </div>`;
+                container.innerHTML = `<div class="empty-state"><span>📭</span>Nenhum anime nesse filtro ainda.<br><small style="color: var(--text-dim); font-size: 12px;">Adicione pelo formulário acima.</small></div>`;
                 return;
             }
 
@@ -436,28 +400,21 @@
             container.innerHTML = filtrada.map(item => {
                 const anime = typeof getAnime === 'function' ? getAnime(item.animeId) : null;
                 if (!anime) return '';
-
                 const badges = [];
                 if (item.legendado) badges.push(`🟢 ${item.legendado.horario} (${item.legendado.plataforma})`);
                 if (item.dublado) badges.push(`🟡 ${item.dublado.horario} (${item.dublado.plataforma})`);
-
                 return `
                     <div class="item-card">
-                        <img src="${anime.img}" alt="${anime.titulo}"
-                             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 50 70%22%3E%3Crect fill=%22%231a202c%22 width=%2250%22 height=%2270%22/%3E%3C/svg%3E'">
+                        <img src="${anime.img}" alt="${anime.titulo}">
                         <div class="item-info">
                             <strong>${anime.titulo}</strong>
-                            <small>
-                                <strong>${item.dia.charAt(0).toUpperCase() + item.dia.slice(1)}</strong> • Ep. ${String(item.ep).padStart(2, '0')}<br>
-                                ${badges.join(' • ')}
-                            </small>
+                            <small><strong>${item.dia.charAt(0).toUpperCase() + item.dia.slice(1)}</strong> • Ep. ${String(item.ep).padStart(2, '0')}<br>${badges.join(' • ')}</small>
                         </div>
                         <div class="item-actions">
                             <button class="btn-edit" onclick="editarItem('${item.id}')">✏️</button>
                             <button class="btn-danger" onclick="deletarItem('${item.id}')">🗑️</button>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             }).join('');
         }
 
@@ -471,11 +428,6 @@
         });
 
         window.addEventListener('load', () => {
-            /* Mostra temporada atual */
-            if (typeof TEMPORADA_ATUAL !== 'undefined') {
-                document.getElementById('temporadaBadge').textContent =
-                    `${TEMPORADA_ATUAL.emoji} ${TEMPORADA_ATUAL.nome}`;
-            }
             preencherSelectAnimes();
             renderLista();
         });
