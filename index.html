@@ -3,17 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="AniVerse - Sua agenda definitiva de animes. Faça login para continuar.">
     <title>AniVerse - Login</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%232b7fff'/><text x='50' y='68' font-size='52' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'>AV</text></svg>">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        :root {
-            --bg: #0b0e14; --bg-2: #121721; --bg-3: #1a202c;
-            --border: #1e2638; --border-2: #2d3748;
-            --text: #ffffff; --text-muted: #9ca3af;
-            --primary: #8b5cf6; --primary-hover: #7c3aed; --blue: #2b7fff; --danger: #ef4444;
-        }
+        :root { --bg: #0b0e14; --bg-2: #121721; --bg-3: #1a202c; --border: #1e2638; --border-2: #2d3748; --text: #ffffff; --text-muted: #9ca3af; --primary: #8b5cf6; --primary-hover: #7c3aed; --blue: #2b7fff; --danger: #ef4444; }
         body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; }
         .glow-bg { position: absolute; width: 800px; height: 800px; background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, rgba(11, 14, 20, 0) 70%); top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 0; pointer-events: none; }
         .login-wrapper { display: flex; width: 100%; max-width: 1200px; margin: 0 auto; z-index: 1; }
@@ -44,13 +38,7 @@
         .toggle-auth a { color: var(--primary); text-decoration: none; font-weight: bold; cursor: pointer; }
         .toggle-auth a:hover { text-decoration: underline; }
         .erro-msg { color: var(--danger); font-size: 13px; text-align: center; margin-top: 10px; display: none; }
-        @media (max-width: 900px) {
-            .login-wrapper { flex-direction: column; }
-            .hero-side { padding: 40px 20px; text-align: center; align-items: center; }
-            .hero-side h1 { font-size: 32px; }
-            .form-side { padding: 20px; }
-            .auth-box { padding: 30px 20px; }
-        }
+        @media (max-width: 900px) { .login-wrapper { flex-direction: column; } .hero-side { padding: 40px 20px; text-align: center; align-items: center; } .hero-side h1 { font-size: 32px; } .form-side { padding: 20px; } .auth-box { padding: 30px 20px; } }
     </style>
 </head>
 <body>
@@ -92,7 +80,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -109,9 +97,15 @@
         const db = getFirestore(app);
         window.aniverseAuth = { auth, db, doc, setDoc, getDoc, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, updateProfile };
 
+        // Se o usuário já está logado, manda pra agenda
         onAuthStateChanged(auth, (user) => {
             if (user) window.location.href = 'agenda.html';
         });
+
+        // Se a URL tiver ?logout=true, limpa a URL visualmente
+        if (window.location.search.includes('logout=true')) {
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
     </script>
     <script>
         let isCadastro = false;
@@ -165,15 +159,11 @@
                 const provider = new GoogleAuthProvider();
                 const result = await signInWithPopup(auth, provider);
                 
-                // Se for a primeira vez que loga com Google, salva o avatar no banco
                 const userRef = doc(db, "usuarios", result.user.uid);
                 const docSnap = await getDoc(userRef);
                 if (!docSnap.exists()) {
                     await setDoc(userRef, {
-                        email: result.user.email,
-                        nome: result.user.displayName,
-                        avatar: 'AV',
-                        criadoEm: new Date().toISOString()
+                        email: result.user.email, nome: result.user.displayName, avatar: 'AV', criadoEm: new Date().toISOString()
                     });
                 }
             } catch (error) {
