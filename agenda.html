@@ -19,14 +19,7 @@
         html { scroll-behavior: smooth; }
         body { background-color: var(--bg); color: var(--text); padding-bottom: 50px; }
 
-        /* NAVBAR */
-        header {
-            background-color: var(--bg-2); padding: 15px 30px;
-            display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 1px solid var(--border);
-            position: sticky; top: 0; z-index: 100;
-            backdrop-filter: blur(10px); flex-wrap: wrap; gap: 15px;
-        }
+        header { background-color: var(--bg-2); padding: 15px 30px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); flex-wrap: wrap; gap: 15px; }
         .logo-area { display: flex; align-items: center; gap: 10px; }
         .logo { background-color: var(--blue); color: white; font-weight: bold; padding: 5px 10px; border-radius: 6px; font-size: 18px; }
         .brand-name { font-size: 20px; font-weight: bold; }
@@ -41,58 +34,35 @@
         .search-bar:focus { border-color: var(--primary); width: 240px; }
         .menu-toggle { display: none; background: var(--bg-3); border: 1px solid var(--border-2); color: white; font-size: 20px; padding: 6px 12px; border-radius: 8px; cursor: pointer; }
 
-        /* MENU DE USUÁRIO */
+        /* MENU DE USUÁRIO COM AVATAR */
         .user-menu-container { position: relative; }
-        .user-profile {
-            background-color: var(--bg-3); padding: 6px 12px; border-radius: 20px;
-            display: flex; align-items: center; gap: 8px; font-size: 13px;
-            cursor: pointer; transition: background 0.2s; border: 1px solid var(--border-2);
-        }
+        .user-profile { background-color: var(--bg-3); padding: 6px 12px; border-radius: 20px; display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; transition: background 0.2s; border: 1px solid var(--border-2); }
         .user-profile:hover { background: #252d3d; }
-        .user-dropdown {
-            position: absolute; top: 100%; right: 0; margin-top: 8px;
-            background: var(--bg-2); border: 1px solid var(--border-2);
-            border-radius: 8px; padding: 8px; min-width: 200px; display: none;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 101;
-        }
+        .user-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; overflow: hidden; flex-shrink: 0; }
+        .user-dropdown { position: absolute; top: 100%; right: 0; margin-top: 8px; background: var(--bg-2); border: 1px solid var(--border-2); border-radius: 8px; padding: 8px; min-width: 220px; display: none; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 101; }
         .user-dropdown.open { display: block; }
         .user-email { padding: 8px 12px; font-size: 12px; color: var(--text-muted); border-bottom: 1px solid var(--border); margin-bottom: 5px; word-break: break-all; }
-        .btn-dropdown {
-            display: block; width: 100%; text-align: left; background: transparent;
-            color: var(--text); border: none; padding: 8px 12px; border-radius: 6px;
-            font-size: 13px; cursor: pointer; transition: background 0.2s;
-        }
+        .btn-dropdown { display: block; width: 100%; text-align: left; background: transparent; color: var(--text); border: none; padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; transition: background 0.2s; }
         .btn-dropdown:hover { background: var(--bg-3); }
         .btn-dropdown.danger { color: var(--danger); }
         .btn-dropdown.danger:hover { background: rgba(239, 68, 68, 0.1); }
+        
+        .emoji-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; padding: 10px; border-top: 1px solid var(--border); margin-top: 5px; }
+        .emoji-btn { background: var(--bg-3); border: 1px solid transparent; border-radius: 6px; font-size: 18px; cursor: pointer; padding: 5px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .emoji-btn:hover { background: var(--border-2); }
+        .emoji-btn.selected { border-color: var(--primary); background: rgba(139, 92, 246, 0.2); }
 
-        /* CONTAINER & CONTEÚDO */
         .container { max-width: 1100px; margin: 20px auto; padding: 0 20px; }
         .page-title { font-size: 24px; font-weight: bold; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
-        .temporada-info {
-            display: inline-flex; align-items: center; gap: 10px;
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(168, 85, 247, 0.05));
-            border: 1px solid var(--primary); border-radius: 20px;
-            padding: 6px 16px; font-size: 13px; font-weight: bold;
-            color: #d8b4fe; margin-bottom: 15px;
-        }
+        .temporada-info { display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(168, 85, 247, 0.05)); border: 1px solid var(--primary); border-radius: 20px; padding: 6px 16px; font-size: 13px; font-weight: bold; color: #d8b4fe; margin-bottom: 15px; }
         .temporada-info .contador { color: var(--text-muted); font-weight: normal; font-size: 12px; }
         .page-subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 25px; }
 
-        .filters-bar {
-            background-color: var(--bg-2); border: 1px solid var(--border);
-            border-radius: 10px; padding: 12px 18px; margin-bottom: 25px;
-            display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap;
-        }
+        .filters-bar { background-color: var(--bg-2); border: 1px solid var(--border); border-radius: 10px; padding: 12px 18px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; }
         .filters-bar-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         .filters-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: bold; }
         .idioma-filters { display: flex; gap: 8px; flex-wrap: wrap; }
-        .idioma-btn {
-            background-color: var(--bg-3); color: var(--text-muted);
-            border: 1px solid var(--border-2); padding: 6px 14px; border-radius: 20px;
-            font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.2s;
-            display: flex; align-items: center; gap: 5px;
-        }
+        .idioma-btn { background-color: var(--bg-3); color: var(--text-muted); border: 1px solid var(--border-2); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 5px; }
         .idioma-btn.active, .idioma-btn:hover { background-color: var(--primary); color: white; border-color: var(--primary); }
         .idioma-btn .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
         .idioma-btn[data-idioma="legendado"] .dot { background: var(--legendado); }
@@ -199,15 +169,26 @@
         </nav>
         <div class="search-user">
             <input type="text" class="search-bar" placeholder="Buscar animes...">
-            <!-- MENU DE USUÁRIO -->
+            
+            <!-- MENU DE USUÁRIO COM AVATAR -->
             <div class="user-menu-container">
                 <div class="user-profile" onclick="toggleUserMenu()">
-                    <span>🦊</span>
+                    <div class="user-avatar" id="headerAvatar">AV</div>
                     <strong id="headerUserName">Carregando...</strong>
                 </div>
                 <div class="user-dropdown" id="userDropdown">
                     <div class="user-email" id="headerUserEmail"></div>
-                    <button class="btn-dropdown" onclick="sair()">🚪 Sair</button>
+                    
+                    <div style="padding: 8px 12px 0; font-size: 11px; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Seu Avatar:</div>
+                    <div class="emoji-grid" id="emojiGrid">
+                        <button class="emoji-btn selected" onclick="salvarAvatar('AV')">AV</button>
+                        <button class="emoji-btn" onclick="salvarAvatar('🦊')">🦊</button>
+                        <button class="emoji-btn" onclick="salvarAvatar('🐱')">🐱</button>
+                        <button class="emoji-btn" onclick="salvarAvatar('🐼')">🐼</button>
+                        <button class="emoji-btn" onclick="salvarAvatar('🔥')">🔥</button>
+                    </div>
+
+                    <button class="btn-dropdown" style="margin-top: 5px;" onclick="sair()">🚪 Sair</button>
                     <button class="btn-dropdown danger" onclick="deletarConta()">🗑️ Excluir Conta</button>
                 </div>
             </div>
@@ -258,9 +239,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut, deleteUser } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-        import { getFirestore, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { getFirestore, doc, deleteDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-        // COLE SUA CONFIGURAÇÃO AQUI
         const firebaseConfig = {
             apiKey: "AIzaSyCOdEgBjNHqlEl_YbH93i3VBasfss5QeTs",
             authDomain: "aniverse-fae73.firebaseapp.com",
@@ -274,31 +254,51 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
                 const nome = user.displayName || user.email.split('@')[0];
                 document.getElementById('headerUserName').textContent = nome;
                 document.getElementById('headerUserEmail').textContent = user.email;
+                window.currentUser = user;
+
+                const docRef = doc(db, "usuarios", user.uid);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists() && docSnap.data().avatar) {
+                    atualizarAvatarUI(docSnap.data().avatar);
+                } else {
+                    atualizarAvatarUI('AV');
+                }
             } else {
                 window.location.href = 'index.html';
             }
         });
 
-        window.toggleUserMenu = () => {
-            document.getElementById('userDropdown').classList.toggle('open');
+        function atualizarAvatarUI(avatar) {
+            const el = document.getElementById('headerAvatar');
+            el.innerHTML = avatar;
+            el.style.background = avatar === 'AV' ? 'var(--primary)' : 'var(--bg-3)';
+            document.querySelectorAll('.emoji-btn').forEach(btn => {
+                if(btn.textContent.trim() === avatar) btn.classList.add('selected');
+                else btn.classList.remove('selected');
+            });
+        }
+
+        window.salvarAvatar = async (avatar) => {
+            if (!window.currentUser) return;
+            try {
+                await setDoc(doc(db, "usuarios", window.currentUser.uid), { avatar: avatar }, { merge: true });
+                atualizarAvatarUI(avatar);
+            } catch (error) { console.error(error); }
         };
 
+        window.toggleUserMenu = () => { document.getElementById('userDropdown').classList.toggle('open'); };
         document.addEventListener('click', (e) => {
             const container = document.querySelector('.user-menu-container');
-            if (container && !container.contains(e.target)) {
-                document.getElementById('userDropdown').classList.remove('open');
-            }
+            if (container && !container.contains(e.target)) document.getElementById('userDropdown').classList.remove('open');
         });
-
         window.sair = async () => { await signOut(auth); window.location.href = 'index.html'; };
-
         window.deletarConta = async () => {
-            if (confirm('Tem certeza absoluta? Isso apagará sua conta e todos os seus dados. Esta ação não pode ser desfeita.')) {
+            if (confirm('Tem certeza absoluta? Isso apagará sua conta e todos os seus dados.')) {
                 const user = auth.currentUser;
                 if (user) {
                     try {
@@ -306,10 +306,7 @@
                         await deleteUser(user);
                         alert('Sua conta foi excluída.');
                         window.location.href = 'index.html';
-                    } catch (error) {
-                        console.error(error);
-                        alert('Erro ao excluir. Faça login novamente e tente de novo.');
-                    }
+                    } catch (error) { alert('Erro ao excluir.'); }
                 }
             }
         };
@@ -319,20 +316,14 @@
 
     <script>
         const STORAGE_AGENDA = 'aniverse_agenda_custom';
-
         function toggleMenu() { document.getElementById('mainNav').classList.toggle('open'); }
-
         function showToast(msg, tipo = '') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             toast.className = 'toast ' + tipo;
             toast.textContent = msg;
             container.appendChild(toast);
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transition = 'opacity 0.3s';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
+            setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
         const PLATAFORMAS_LINKS = {
@@ -342,53 +333,28 @@
             hidive: { nome: 'HIDIVE', gerarLink: (a) => `https://www.hidive.com/search?q=${encodeURIComponent(a.titulo)}` }
         };
 
-        function carregarAgendaCustom() {
-            try {
-                const raw = localStorage.getItem(STORAGE_AGENDA);
-                return raw ? JSON.parse(raw) : [];
-            } catch { return []; }
-        }
-
+        function carregarAgendaCustom() { try { const raw = localStorage.getItem(STORAGE_AGENDA); return raw ? JSON.parse(raw) : []; } catch { return []; } }
         function agruparPorDia(lista) {
             const grupos = { segunda: [], terca: [], quarta: [], quinta: [], sexta: [], sabado: [], domingo: [] };
-            lista.forEach(item => {
-                if (grupos[item.dia]) grupos[item.dia].push(item);
-            });
+            lista.forEach(item => { if (grupos[item.dia]) grupos[item.dia].push(item); });
             return grupos;
         }
 
         let idiomaFiltro = 'todos';
-
-        function getDiaAtual() {
-            const dias = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
-            return dias[new Date().getDay()];
-        }
-
+        function getDiaAtual() { const dias = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado']; return dias[new Date().getDay()]; }
         function marcarHoje() {
             const diaHoje = getDiaAtual();
-            document.querySelectorAll('.day-btn').forEach(btn => {
-                if (btn.dataset.dia === diaHoje && !btn.querySelector('.today-badge')) {
-                    btn.innerHTML += ' <span class="today-badge">HOJE</span>';
-                }
-            });
+            document.querySelectorAll('.day-btn').forEach(btn => { if (btn.dataset.dia === diaHoje && !btn.querySelector('.today-badge')) btn.innerHTML += ' <span class="today-badge">HOJE</span>'; });
         }
-
-        function mostrarSkeleton() {
-            document.getElementById('scheduleList').innerHTML = '<div class="skeleton"></div>'.repeat(3);
-        }
+        function mostrarSkeleton() { document.getElementById('scheduleList').innerHTML = '<div class="skeleton"></div>'.repeat(3); }
 
         function renderLancamentos(lancamento) {
             const badges = [];
-            if (lancamento.legendado) {
-                badges.push(`<div class="lancamento-badge legendado"><span class="idioma-dot"></span><span>Legendado</span><span class="horario">${lancamento.legendado.horario}</span><span class="plataforma">• ${PLATAFORMAS_LINKS[lancamento.legendado.plataforma]?.nome || lancamento.legendado.plataforma}</span></div>`);
-            } else {
-                badges.push(`<div class="lancamento-badge em-breve"><span class="idioma-dot"></span><span>Legendado • em breve</span></div>`);
-            }
-            if (lancamento.dublado) {
-                badges.push(`<div class="lancamento-badge dublado"><span class="idioma-dot"></span><span>Dublado</span><span class="horario">${lancamento.dublado.horario}</span><span class="plataforma">• ${PLATAFORMAS_LINKS[lancamento.dublado.plataforma]?.nome || lancamento.dublado.plataforma}</span></div>`);
-            } else {
-                badges.push(`<div class="lancamento-badge em-breve"><span class="idioma-dot"></span><span>Dublado • em breve</span></div>`);
-            }
+            if (lancamento.legendado) badges.push(`<div class="lancamento-badge legendado"><span class="idioma-dot"></span><span>Legendado</span><span class="horario">${lancamento.legendado.horario}</span><span class="plataforma">• ${PLATAFORMAS_LINKS[lancamento.legendado.plataforma]?.nome || lancamento.legendado.plataforma}</span></div>`);
+            else badges.push(`<div class="lancamento-badge em-breve"><span class="idioma-dot"></span><span>Legendado • em breve</span></div>`);
+            
+            if (lancamento.dublado) badges.push(`<div class="lancamento-badge dublado"><span class="idioma-dot"></span><span>Dublado</span><span class="horario">${lancamento.dublado.horario}</span><span class="plataforma">• ${PLATAFORMAS_LINKS[lancamento.dublado.plataforma]?.nome || lancamento.dublado.plataforma}</span></div>`);
+            else badges.push(`<div class="lancamento-badge em-breve"><span class="idioma-dot"></span><span>Dublado • em breve</span></div>`);
             return badges.join('');
         }
 
@@ -402,7 +368,6 @@
         function filtrarDia(dia, elementoBotao) {
             document.querySelectorAll('.day-btn').forEach(btn => btn.classList.remove('active'));
             if (elementoBotao) elementoBotao.classList.add('active');
-
             mostrarSkeleton();
 
             setTimeout(() => {
@@ -410,7 +375,6 @@
                 const grupos = agruparPorDia(agenda);
                 const lista = grupos[dia] || [];
                 const listaFiltrada = lista.filter(passaFiltroIdioma);
-
                 const container = document.getElementById('scheduleList');
                 container.innerHTML = '';
 
@@ -456,15 +420,11 @@
                     `;
                     container.appendChild(item);
                 });
-
                 showToast(`📅 ${listaFiltrada.length} lançamento(s) para ${dia}`);
             }, 250);
         }
 
-        function getNotificacoes() {
-            try { return JSON.parse(localStorage.getItem('aniverse_notificacoes') || '[]'); }
-            catch { return []; }
-        }
+        function getNotificacoes() { try { return JSON.parse(localStorage.getItem('aniverse_notificacoes') || '[]'); } catch { return []; } }
         function salvarNotificacoes(lista) { localStorage.setItem('aniverse_notificacoes', JSON.stringify(lista)); }
         function isNotificacaoAtiva(animeId) { return getNotificacoes().includes(animeId); }
 
@@ -473,26 +433,12 @@
             const lista = getNotificacoes();
             const idx = lista.indexOf(animeId);
             const btn = event.currentTarget;
-
-            if (idx >= 0) {
-                lista.splice(idx, 1);
-                btn.classList.remove('ativo');
-                btn.innerHTML = '🔔 Me avisa';
-                showToast('Notificação desativada');
-            } else {
-                lista.push(animeId);
-                btn.classList.add('ativo');
-                btn.innerHTML = '🔔 Ativado';
-                showToast('✅ Você será avisado quando sair!', 'success');
-            }
+            if (idx >= 0) { lista.splice(idx, 1); btn.classList.remove('ativo'); btn.innerHTML = '🔔 Me avisa'; showToast('Notificação desativada'); }
+            else { lista.push(animeId); btn.classList.add('ativo'); btn.innerHTML = '🔔 Ativado'; showToast('✅ Você será avisado!', 'success'); }
             salvarNotificacoes(lista);
         };
 
-        function renderTemporada() {
-            if (typeof TEMPORADA_ATUAL === 'undefined') return;
-            document.getElementById('temporadaTexto').textContent = `${TEMPORADA_ATUAL.emoji} ${TEMPORADA_ATUAL.nome}`;
-        }
-
+        function renderTemporada() { if (typeof TEMPORADA_ATUAL !== 'undefined') document.getElementById('temporadaTexto').textContent = `${TEMPORADA_ATUAL.emoji} ${TEMPORADA_ATUAL.nome}`; }
         function atualizarContadorTemporada() {
             if (typeof ANIMES_LISTA === 'undefined') return;
             const agenda = carregarAgendaCustom();
@@ -500,36 +446,16 @@
             document.getElementById('temporadaContador').textContent = `${unicos.size} anime${unicos.size !== 1 ? 's' : ''} na agenda`;
         }
 
-        document.getElementById('daysTabs').addEventListener('click', e => {
-            const btn = e.target.closest('.day-btn');
-            if (!btn) return;
-            filtrarDia(btn.dataset.dia, btn);
-        });
-
+        document.getElementById('daysTabs').addEventListener('click', e => { const btn = e.target.closest('.day-btn'); if (!btn) return; filtrarDia(btn.dataset.dia, btn); });
         document.getElementById('idiomaFilters').addEventListener('click', e => {
-            const btn = e.target.closest('.idioma-btn');
-            if (!btn) return;
-            document.querySelectorAll('.idioma-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+            const btn = e.target.closest('.idioma-btn'); if (!btn) return;
+            document.querySelectorAll('.idioma-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active');
             idiomaFiltro = btn.dataset.idioma;
-            const diaAtivo = document.querySelector('.day-btn.active');
-            if (diaAtivo) filtrarDia(diaAtivo.dataset.dia, diaAtivo);
+            const diaAtivo = document.querySelector('.day-btn.active'); if (diaAtivo) filtrarDia(diaAtivo.dataset.dia, diaAtivo);
         });
 
-        window.addEventListener('focus', () => {
-            const diaAtivo = document.querySelector('.day-btn.active');
-            if (diaAtivo) filtrarDia(diaAtivo.dataset.dia, diaAtivo);
-            atualizarContadorTemporada();
-        });
-
-        window.addEventListener('load', () => {
-            renderTemporada();
-            marcarHoje();
-            atualizarContadorTemporada();
-            const diaHoje = getDiaAtual();
-            const btnHoje = document.querySelector(`.day-btn[data-dia="${diaHoje}"]`);
-            filtrarDia(diaHoje, btnHoje);
-        });
+        window.addEventListener('focus', () => { const diaAtivo = document.querySelector('.day-btn.active'); if (diaAtivo) filtrarDia(diaAtivo.dataset.dia, diaAtivo); atualizarContadorTemporada(); });
+        window.addEventListener('load', () => { renderTemporada(); marcarHoje(); atualizarContadorTemporada(); const diaHoje = getDiaAtual(); filtrarDia(diaHoje, document.querySelector(`.day-btn[data-dia="${diaHoje}"]`)); });
     </script>
 </body>
 </html>
