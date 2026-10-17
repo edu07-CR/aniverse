@@ -6,7 +6,6 @@
     <meta name="description" content="AniVerse - Sua agenda definitiva de animes. Faça login para continuar.">
     <title>AniVerse - Login</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%232b7fff'/><text x='50' y='68' font-size='52' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'>AV</text></svg>">
-    
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         :root {
@@ -16,81 +15,35 @@
             --primary: #8b5cf6; --primary-hover: #7c3aed; --blue: #2b7fff; --danger: #ef4444;
         }
         body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; }
-
-        /* Efeito de fundo */
-        .glow-bg {
-            position: absolute; width: 800px; height: 800px;
-            background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, rgba(11, 14, 20, 0) 70%);
-            top: 50%; left: 50%; transform: translate(-50%, -50%);
-            z-index: 0; pointer-events: none;
-        }
-
-        /* Layout em 2 colunas */
-        .login-wrapper {
-            display: flex; width: 100%; max-width: 1200px; margin: 0 auto; z-index: 1;
-        }
-
-        /* Lado Esquerdo (Vitrine) */
-        .hero-side {
-            flex: 1; padding: 60px; display: flex; flex-direction: column; justify-content: center;
-        }
+        .glow-bg { position: absolute; width: 800px; height: 800px; background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, rgba(11, 14, 20, 0) 70%); top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 0; pointer-events: none; }
+        .login-wrapper { display: flex; width: 100%; max-width: 1200px; margin: 0 auto; z-index: 1; }
+        .hero-side { flex: 1; padding: 60px; display: flex; flex-direction: column; justify-content: center; }
         .logo-area { display: flex; align-items: center; gap: 10px; margin-bottom: 40px; }
         .logo { background-color: var(--blue); color: white; font-weight: bold; padding: 5px 10px; border-radius: 6px; font-size: 20px; }
         .brand-name { font-size: 24px; font-weight: bold; }
-        
         .hero-side h1 { font-size: 48px; line-height: 1.1; margin-bottom: 20px; font-weight: 800; }
         .hero-side h1 span { background: linear-gradient(135deg, var(--primary), #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .hero-side p { font-size: 18px; color: var(--text-muted); line-height: 1.6; margin-bottom: 30px; max-width: 450px; }
-
-        /* Lado Direito (Formulário) */
-        .form-side {
-            flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px;
-        }
-        .auth-box {
-            background: var(--bg-2); border: 1px solid var(--border);
-            border-radius: 16px; padding: 40px; width: 100%; max-width: 420px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
+        .form-side { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px; }
+        .auth-box { background: var(--bg-2); border: 1px solid var(--border); border-radius: 16px; padding: 40px; width: 100%; max-width: 420px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
         .auth-box h2 { font-size: 24px; margin-bottom: 8px; }
         .auth-box p.subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 25px; }
-
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-size: 12px; font-weight: bold; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; }
-        .form-group input {
-            width: 100%; background: var(--bg-3); border: 1px solid var(--border-2);
-            padding: 12px 15px; border-radius: 8px; color: white; font-size: 14px; outline: none;
-            transition: border-color 0.2s;
-        }
+        .form-group input { width: 100%; background: var(--bg-3); border: 1px solid var(--border-2); padding: 12px 15px; border-radius: 8px; color: white; font-size: 14px; outline: none; transition: border-color 0.2s; }
         .form-group input:focus { border-color: var(--primary); }
-
-        .btn-main {
-            width: 100%; background: var(--primary); color: white; border: none;
-            padding: 14px; border-radius: 8px; font-weight: bold; font-size: 16px;
-            cursor: pointer; transition: background 0.2s; margin-top: 10px;
-            display: flex; justify-content: center; align-items: center; gap: 8px;
-        }
+        .btn-main { width: 100%; background: var(--primary); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; transition: background 0.2s; margin-top: 10px; display: flex; justify-content: center; align-items: center; gap: 8px; }
         .btn-main:hover { background: var(--primary-hover); }
-
-        .btn-google {
-            width: 100%; background: transparent; color: white; border: 1px solid var(--border-2);
-            padding: 12px; border-radius: 8px; font-weight: bold; font-size: 14px;
-            cursor: pointer; transition: background 0.2s; margin-top: 10px;
-            display: flex; justify-content: center; align-items: center; gap: 10px;
-        }
+        .btn-google { width: 100%; background: transparent; color: white; border: 1px solid var(--border-2); padding: 12px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; transition: background 0.2s; margin-top: 10px; display: flex; justify-content: center; align-items: center; gap: 10px; }
         .btn-google:hover { background: var(--bg-3); }
-
         .divider { display: flex; align-items: center; text-align: center; color: var(--text-muted); font-size: 12px; margin: 20px 0; }
         .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--border-2); }
         .divider:not(:empty)::before { margin-right: .25em; }
         .divider:not(:empty)::after { margin-left: .25em; }
-
         .toggle-auth { text-align: center; font-size: 14px; color: var(--text-muted); margin-top: 20px; }
         .toggle-auth a { color: var(--primary); text-decoration: none; font-weight: bold; cursor: pointer; }
         .toggle-auth a:hover { text-decoration: underline; }
-
         .erro-msg { color: var(--danger); font-size: 13px; text-align: center; margin-top: 10px; display: none; }
-
-        /* Responsivo */
         @media (max-width: 900px) {
             .login-wrapper { flex-direction: column; }
             .hero-side { padding: 40px 20px; text-align: center; align-items: center; }
@@ -101,66 +54,45 @@
     </style>
 </head>
 <body>
-
     <div class="glow-bg"></div>
-
     <div class="login-wrapper">
-        <!-- Lado Esquerdo -->
         <div class="hero-side">
-            <div class="logo-area">
-                <div class="logo">AV</div>
-                <div class="brand-name">AniVerse</div>
-            </div>
+            <div class="logo-area"><div class="logo">AV</div><div class="brand-name">AniVerse</div></div>
             <h1>Nunca mais perca um <br>episódio de <span>anime</span>.</h1>
             <p>Acompanhe os lançamentos dublados e legendados no Brasil. Descubra onde assistir e receba notificações no seu celular quando o episódio sair.</p>
         </div>
-
-        <!-- Lado Direito (Formulário) -->
         <div class="form-side">
             <div class="auth-box">
                 <h2 id="tituloAuth">Bem-vindo de volta</h2>
                 <p class="subtitle" id="subtituloAuth">Entre para gerenciar seus animes e notificações.</p>
-
                 <div class="form-group" id="grupoNome" style="display: none;">
                     <label for="nomeInput">Seu Nome</label>
                     <input type="text" id="nomeInput" placeholder="Como quer ser chamado?">
                 </div>
-
                 <div class="form-group">
                     <label for="emailInput">E-mail</label>
                     <input type="email" id="emailInput" placeholder="seu@email.com">
                 </div>
-
                 <div class="form-group">
                     <label for="senhaInput">Senha</label>
                     <input type="password" id="senhaInput" placeholder="Sua senha (mín. 6 caracteres)">
                 </div>
-
                 <div class="erro-msg" id="erroMsg"></div>
-
                 <button class="btn-main" id="btnSubmit" onclick="fazerLogin()">Entrar</button>
-                
                 <div class="divider">ou</div>
                 <button class="btn-google" onclick="fazerLoginGoogle()">
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" alt="Google">
-                    Continuar com Google
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18" alt="Google"> Continuar com Google
                 </button>
-
                 <div class="toggle-auth">
-                    <span id="textoAlternar">Não tem uma conta?</span> 
-                    <a id="btnAlternar" onclick="alternarModo()">Cadastre-se</a>
+                    <span id="textoAlternar">Não tem uma conta?</span> <a id="btnAlternar" onclick="alternarModo()">Cadastre-se</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ===== Firebase Auth ===== -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { 
-            getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, 
-            GoogleAuthProvider, signInWithPopup, onAuthStateChanged, updateProfile 
-        } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -175,53 +107,24 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-
         window.aniverseAuth = { auth, db, doc, setDoc, getDoc, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, updateProfile };
 
-        // Verifica se o usuário já está logado. Se estiver, manda pra agenda.
         onAuthStateChanged(auth, (user) => {
-            if (user) {
-                console.log('✅ Usuário logado:', user.email);
-                window.location.href = 'agenda.html';
-            }
+            if (user) window.location.href = 'agenda.html';
         });
     </script>
-
-    <!-- ===== Lógica da Tela ===== -->
     <script>
         let isCadastro = false;
-
-        function mostrarErro(msg) {
-            const el = document.getElementById('erroMsg');
-            el.textContent = msg;
-            el.style.display = 'block';
-        }
-
+        function mostrarErro(msg) { const el = document.getElementById('erroMsg'); el.textContent = msg; el.style.display = 'block'; }
         function alternarModo() {
             isCadastro = !isCadastro;
-            const titulo = document.getElementById('tituloAuth');
-            const subtitulo = document.getElementById('subtituloAuth');
-            const grupoNome = document.getElementById('grupoNome');
-            const btnSubmit = document.getElementById('btnSubmit');
-            const textoAlternar = document.getElementById('textoAlternar');
-            const btnAlternar = document.getElementById('btnAlternar');
+            document.getElementById('tituloAuth').textContent = isCadastro ? 'Crie sua conta' : 'Bem-vindo de volta';
+            document.getElementById('subtituloAuth').textContent = isCadastro ? 'Junte-se ao AniVerse e organize seus animes.' : 'Entre para gerenciar seus animes e notificações.';
+            document.getElementById('grupoNome').style.display = isCadastro ? 'block' : 'none';
+            document.getElementById('btnSubmit').textContent = isCadastro ? 'Cadastrar' : 'Entrar';
+            document.getElementById('textoAlternar').textContent = isCadastro ? 'Já tem uma conta?' : 'Não tem uma conta?';
+            document.getElementById('btnAlternar').textContent = isCadastro ? 'Faça login' : 'Cadastre-se';
             document.getElementById('erroMsg').style.display = 'none';
-
-            if (isCadastro) {
-                titulo.textContent = 'Crie sua conta';
-                subtitulo.textContent = 'Junte-se ao AniVerse e organize seus animes.';
-                grupoNome.style.display = 'block';
-                btnSubmit.textContent = 'Cadastrar';
-                textoAlternar.textContent = 'Já tem uma conta?';
-                btnAlternar.textContent = 'Faça login';
-            } else {
-                titulo.textContent = 'Bem-vindo de volta';
-                subtitulo.textContent = 'Entre para gerenciar seus animes e notificações.';
-                grupoNome.style.display = 'none';
-                btnSubmit.textContent = 'Entrar';
-                textoAlternar.textContent = 'Não tem uma conta?';
-                btnAlternar.textContent = 'Cadastre-se';
-            }
         }
 
         async function fazerLogin() {
@@ -229,59 +132,52 @@
             const senha = document.getElementById('senhaInput').value;
             const nome = document.getElementById('nomeInput').value.trim();
             const btn = document.getElementById('btnSubmit');
-
-            if (!email || !senha) {
-                mostrarErro('Preencha o e-mail e a senha.');
-                return;
-            }
-
-            btn.textContent = 'Aguarde...';
-            btn.disabled = true;
-
+            if (!email || !senha) return mostrarErro('Preencha o e-mail e a senha.');
+            
+            btn.textContent = 'Aguarde...'; btn.disabled = true;
             try {
-                const { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword } = window.aniverseAuth;
-
+                const { auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, db, doc, setDoc, updateProfile } = window.aniverseAuth;
                 if (isCadastro) {
                     if (!nome) throw new Error('Digite seu nome.');
                     if (senha.length < 6) throw new Error('A senha precisa ter pelo menos 6 caracteres.');
-
                     const cred = await createUserWithEmailAndPassword(auth, email, senha);
-                    // Salva o nome no perfil e no banco
-                    await window.aniverseAuth.updateProfile(cred.user, { displayName: nome });
-                    await window.aniverseAuth.setDoc(window.aniverseAuth.doc(window.aniverseAuth.db, "usuarios", cred.user.uid), {
-                        email: email,
-                        nome: nome,
-                        criadoEm: new Date().toISOString()
+                    await updateProfile(cred.user, { displayName: nome });
+                    await setDoc(doc(db, "usuarios", cred.user.uid), {
+                        email: email, nome: nome, avatar: 'AV', criadoEm: new Date().toISOString()
                     });
                 } else {
                     await signInWithEmailAndPassword(auth, email, senha);
                 }
-                // O redirecionamento é feito pelo onAuthStateChanged lá em cima
             } catch (error) {
-                console.error(error);
                 let msg = 'Ocorreu um erro. Tente novamente.';
                 if (error.code === 'auth/email-already-in-use') msg = 'Este e-mail já está cadastrado.';
                 if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') msg = 'E-mail ou senha incorretos.';
                 if (error.code === 'auth/weak-password') msg = 'A senha é muito fraca.';
                 if (error.message && error.message.includes('pelo menos 6')) msg = error.message;
-                
                 mostrarErro(msg);
-                btn.textContent = isCadastro ? 'Cadastrar' : 'Entrar';
-                btn.disabled = false;
+                btn.textContent = isCadastro ? 'Cadastrar' : 'Entrar'; btn.disabled = false;
             }
         }
 
         async function fazerLoginGoogle() {
             try {
-                const { auth, GoogleAuthProvider, signInWithPopup } = window.aniverseAuth;
+                const { auth, GoogleAuthProvider, signInWithPopup, db, doc, getDoc, setDoc } = window.aniverseAuth;
                 const provider = new GoogleAuthProvider();
-                await signInWithPopup(auth, provider);
-                // O redirecionamento é feito pelo onAuthStateChanged
-            } catch (error) {
-                console.error(error);
-                if (error.code !== 'auth/popup-closed-by-user') {
-                    mostrarErro('Erro ao entrar com Google. Tente novamente.');
+                const result = await signInWithPopup(auth, provider);
+                
+                // Se for a primeira vez que loga com Google, salva o avatar no banco
+                const userRef = doc(db, "usuarios", result.user.uid);
+                const docSnap = await getDoc(userRef);
+                if (!docSnap.exists()) {
+                    await setDoc(userRef, {
+                        email: result.user.email,
+                        nome: result.user.displayName,
+                        avatar: 'AV',
+                        criadoEm: new Date().toISOString()
+                    });
                 }
+            } catch (error) {
+                if (error.code !== 'auth/popup-closed-by-user') mostrarErro('Erro ao entrar com Google.');
             }
         }
     </script>
