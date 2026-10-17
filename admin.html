@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Painel de administração da agenda - AniVerse">
     <title>AniVerse - Admin Agenda</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%238b5cf6'/><text x='50' y='68' font-size='52' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'>AD</text></svg>">
     <style>
@@ -128,7 +127,7 @@
 
     <div class="container">
         <h1 class="page-title">⚙️ Painel de Administração</h1>
-        <p class="page-subtitle">Adicione, edite ou remova animes da agenda sem mexer em código.</p>
+        <p class="page-subtitle">Adicione, edite ou remova animes da agenda. Tudo é salvo na nuvem.</p>
 
         <div class="section-card">
             <h3 id="formTitulo">➕ Adicionar Anime na Agenda</h3>
@@ -201,7 +200,7 @@
                 <button class="day-btn" data-dia="sabado">Sábado</button>
                 <button class="day-btn" data-dia="domingo">Domingo</button>
             </div>
-            <div id="listaItens"></div>
+            <div id="listaItens"><p style="text-align:center; color:var(--text-muted);">Carregando agenda...</p></div>
         </div>
     </div>
 
@@ -210,7 +209,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut, deleteUser } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-        import { getFirestore, doc, deleteDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { getFirestore, doc, deleteDoc, setDoc, getDoc, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCOdEgBjNHqlEl_YbH93i3VBasfss5QeTs",
@@ -227,12 +226,15 @@
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // PROTEÇÃO: Só entra se for seu e-mail!
-                if (user.email !== '07kadurodrig@gmail.com') {
-                    alert('Acesso negado. Área restrita.');
+                // Puxa o token para validar a Claim de Admin
+                const tokenResult = await user.getIdTokenResult();
+                
+                if (!tokenResult.claims.admin) {
+                    alert('Acesso negado. Área restrita para administradores.');
                     window.location.href = 'agenda.html';
                     return;
                 }
+
                 const nome = user.displayName || user.email.split('@')[0];
                 document.getElementById('headerUserName').textContent = nome;
                 document.getElementById('headerUserEmail').textContent = user.email;
@@ -242,6 +244,10 @@
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists() && docSnap.data().avatar) atualizarAvatarUI(docSnap.data().avatar);
                 else atualizarAvatarUI('AV');
+                
+                // Libera a tela para carregar a agenda
+                document.getElementById('listaItens').innerHTML = ''; 
+                await carregarAgendaFirestore();
             } else {
                 window.location.href = 'index.html';
             }
@@ -288,8 +294,9 @@
 
     <script src="animes.js"></script>
     <script>
-        const STORAGE_AGENDA = 'aniverse_agenda_custom';
-        let editandoId = null; let diaFiltroAtual = 'todos';
+        let editandoId = null; 
+        let diaFiltroAtual = 'todos';
+        let agendaGlobal = []; // Agora a agenda vem do Firestore
 
         function showToast(msg, tipo = '') {
             const container = document.getElementById('toastContainer');
@@ -299,8 +306,38 @@
             setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
-        function carregarAgenda() { try { const raw = localStorage.getItem(STORAGE_AGENDA); return raw ? JSON.parse(raw) : []; } catch { return []; } }
-        function salvarAgenda(lista) { localStorage.setItem(STORAGE_AGENDA, JSON.stringify(lista)); }
+        async function carregarAgendaFirestore() {
+            try {
+                const { db, collection, getDocs } = window.aniverseFirestore || {};
+                // Puxa os animes da coleção "agenda" do Firebase
+                const querySnapshot = await getDocs(collection(db, "agenda"));
+                agendaGlobal = [];
+                querySnapshot.forEach((doc) => {
+                    agendaGlobal.push({ id: doc.id, ...doc.data() });
+                });
+                renderLista();
+            } catch (error) {
+                console.error("Erro ao carregar agenda:", error);
+                showToast("Erro ao carregar a agenda.", "error");
+            }
+        }
+
+        // Expõe o Firestore para o escopo global para usar na função acima
+        window.aniverseFirestore = { db: null, collection: null, getDocs: null, doc: null, setDoc: null, deleteDoc: null };
+
+        // Pega as funções do módulo para o escopo global (hack simples para funcionar sem importar tudo de novo)
+        import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js").then(module => {
+            import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js").then(appModule => {
+                const app = appModule.getApps()[0];
+                window.aniverseFirestore.db = module.getFirestore(app);
+                window.aniverseFirestore.collection = module.collection;
+                window.aniverseFirestore.getDocs = module.getDocs;
+                window.aniverseFirestore.doc = module.doc;
+                window.aniverseFirestore.setDoc = module.setDoc;
+                window.aniverseFirestore.deleteDoc = module.deleteDoc;
+                window.aniverseFirestore.addDoc = module.addDoc;
+            });
+        });
 
         function preencherSelectAnimes() {
             const select = document.getElementById('inputAnime');
@@ -324,7 +361,7 @@
             campos.style.display = chk.checked ? 'block' : 'none';
         }
 
-        function salvarAnime() {
+        async function salvarAnime() {
             const animeId = document.getElementById('inputAnime').value;
             const dia = document.getElementById('inputDia').value;
             const ep = parseInt(document.getElementById('inputEp').value) || 1;
@@ -337,17 +374,23 @@
             const legendado = chkLeg ? { horario: document.getElementById('inputHorarioLeg').value || '14:00', plataforma: document.getElementById('inputPlataformaLeg').value } : null;
             const dublado = chkDub ? { horario: document.getElementById('inputHorarioDub').value || '16:00', plataforma: document.getElementById('inputPlataformaDub').value } : null;
 
-            const agenda = carregarAgenda();
-            if (editandoId) {
-                const idx = agenda.findIndex(item => item.id === editandoId);
-                if (idx >= 0) { agenda[idx] = { ...agenda[idx], animeId, dia, ep, legendado, dublado }; }
-                showToast('✅ Anime atualizado!', 'success'); cancelarEdicao();
-            } else {
-                const novo = { id: 'ag_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6), animeId, dia, ep, legendado, dublado, criadoEm: Date.now() };
-                agenda.push(novo);
-                showToast('✅ Anime adicionado!', 'success');
+            const animeData = { animeId, dia, ep, legendado, dublado, criadoEm: Date.now() };
+
+            try {
+                const { db, doc, setDoc, addDoc, collection } = window.aniverseFirestore;
+                
+                if (editandoId) {
+                    await setDoc(doc(db, "agenda", editandoId), animeData, { merge: true });
+                    showToast('✅ Anime atualizado!', 'success'); cancelarEdicao();
+                } else {
+                    await addDoc(collection(db, "agenda"), animeData);
+                    showToast('✅ Anime adicionado!', 'success');
+                }
+                limparFormulario(); 
+                await carregarAgendaFirestore(); // Recarrega a lista atualizada
+            } catch(e) { 
+                console.error(e); showToast('Erro ao salvar no banco.', 'error'); 
             }
-            salvarAgenda(agenda); limparFormulario(); renderLista();
         }
 
         function limparFormulario() {
@@ -364,7 +407,7 @@
         }
 
         function editarItem(id) {
-            const agenda = carregarAgenda(); const item = agenda.find(x => x.id === id);
+            const item = agendaGlobal.find(x => x.id === id);
             if (!item) return;
             editandoId = id; document.getElementById('inputAnime').value = item.animeId; document.getElementById('inputDia').value = item.dia; document.getElementById('inputEp').value = item.ep;
             document.getElementById('chkLegendado').checked = !!item.legendado; document.getElementById('chkDublado').checked = !!item.dublado;
@@ -374,16 +417,20 @@
             document.getElementById('formTitulo').textContent = '✏️ Editando Anime'; document.getElementById('btnSalvar').innerHTML = '💾 Salvar Alterações'; document.getElementById('btnCancelar').style.display = 'flex'; window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function deletarItem(id) {
+        async function deletarItem(id) {
             if (!confirm('Tem certeza que quer remover este anime da agenda?')) return;
-            let agenda = carregarAgenda(); agenda = agenda.filter(x => x.id !== id);
-            salvarAgenda(agenda); renderLista(); showToast('🗑️ Anime removido.', 'success');
+            try {
+                const { db, doc, deleteDoc } = window.aniverseFirestore;
+                await deleteDoc(doc(db, "agenda", id));
+                showToast('🗑️ Anime removido.', 'success');
+                await carregarAgendaFirestore();
+            } catch(e) { showToast('Erro ao deletar.', 'error'); }
         }
 
         function renderLista() {
-            const agenda = carregarAgenda(); const container = document.getElementById('listaItens');
-            let filtrada = agenda;
-            if (diaFiltroAtual !== 'todos') { filtrada = agenda.filter(x => x.dia === diaFiltroAtual); }
+            const container = document.getElementById('listaItens');
+            let filtrada = agendaGlobal;
+            if (diaFiltroAtual !== 'todos') { filtrada = agendaGlobal.filter(x => x.dia === diaFiltroAtual); }
 
             if (filtrada.length === 0) {
                 container.innerHTML = `<div class="empty-state"><span>📭</span>Nenhum anime nesse filtro ainda.<br><small style="color: var(--text-dim); font-size: 12px;">Adicione pelo formulário acima.</small></div>`;
@@ -423,7 +470,7 @@
             diaFiltroAtual = btn.dataset.dia; renderLista();
         });
 
-        window.addEventListener('load', () => { preencherSelectAnimes(); renderLista(); });
+        window.addEventListener('load', () => { preencherSelectAnimes(); });
     </script>
 </body>
 </html>
