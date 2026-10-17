@@ -219,7 +219,6 @@
         <h1 class="page-title">🔔 Meus Animes</h1>
         <p class="page-subtitle">Ative as notificações e seja avisado quando sair episódio novo.</p>
 
-        <!-- Banner de ativar notificação -->
         <div class="notif-banner" id="notifBanner">
             <div class="notif-banner-icon" id="notifIcon">🔔</div>
             <div class="notif-banner-info">
@@ -238,6 +237,35 @@
     </div>
 
     <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ===== Firebase Cloud Messaging ===== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCOdEgBjNHqlEl_YbH93i3VBasfss5QeTs",
+            authDomain: "aniverse-fae73.firebaseapp.com",
+            projectId: "aniverse-fae73",
+            storageBucket: "aniverse-fae73.firebasestorage.app",
+            messagingSenderId: "699188842665",
+            appId: "1:699188842665:web:f29f6cbbc5b0c8a61c59b8"
+        };
+
+        const VAPID_KEY = "BE-aTK1J5J3WsmQDCUH0UP_QoFM_9LXzwG3zYM3FG2rbp2HwsdaNcMSfusJLlLng9BXfR3Xksx4SeCdQXr2GATvo";
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+            const messaging = getMessaging(app);
+
+            window.aniverseFCM = { db, messaging, doc, setDoc, getToken, VAPID_KEY };
+            console.log('✅ Firebase inicializado');
+        } catch (err) {
+            console.error('❌ Erro ao inicializar Firebase:', err);
+        }
+    </script>
 
     <script src="animes.js"></script>
 
@@ -266,9 +294,7 @@
             }, 3000);
         }
 
-        /* ===================================================================
-           REGISTRO DO SERVICE WORKER
-        =================================================================== */
+        /* ===== REGISTRO DO SERVICE WORKER ===== */
         async function registrarServiceWorker() {
             if (!('serviceWorker' in navigator)) {
                 console.warn('Service Worker não suportado');
@@ -284,32 +310,64 @@
             }
         }
 
-        /* ===================================================================
-           ATIVAR NOTIFICAÇÕES
-        =================================================================== */
+        /* ===== ATIVAR NOTIFICAÇÕES ===== */
         async function ativarNotificacoes() {
             if (!('Notification' in window)) {
                 showToast('❌ Seu navegador não suporta notificações.', 'error');
                 return;
             }
 
-            /* Pede permissão */
             const permissao = await Notification.requestPermission();
 
-            if (permissao === 'granted') {
-                localStorage.setItem(STORAGE_NOTIF_ATIVA, 'true');
-                showToast('✅ Notificações ativadas!', 'success');
-                atualizarBannerNotif();
-                verificarEpisodios();
-            } else if (permissao === 'denied') {
-                showToast('❌ Você bloqueou as notificações. Libere nas configurações do navegador.', 'error');
-            } else {
-                showToast('⚠️ Permissão não concedida.', 'error');
+            if (permissao !== 'granted') {
+                showToast('❌ Permissão não concedida.', 'error');
+                return;
             }
+
+            localStorage.setItem(STORAGE_NOTIF_ATIVA, 'true');
+
+            /* Salva token FCM no Firestore */
+            try {
+                if (!window.aniverseFCM) {
+                    showToast('⚠️ Firebase não carregou. Recarregue a página.', 'error');
+                    atualizarBannerNotif();
+                    return;
+                }
+
+                const { messaging, db, doc, setDoc, getToken, VAPID_KEY } = window.aniverseFCM;
+                const token = await getToken(messaging, { vapidKey: VAPID_KEY });
+
+                if (token) {
+                    console.log('✅ Token FCM:', token);
+
+                    let userId = localStorage.getItem('aniverse_user_id');
+                    if (!userId) {
+                        userId = 'user_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+                        localStorage.setItem('aniverse_user_id', userId);
+                    }
+
+                    await setDoc(doc(db, 'usuarios', userId), {
+                        fcmToken: token,
+                        animesSeguidos: getNotificacoes(),
+                        atualizadoEm: new Date().toISOString()
+                    }, { merge: true });
+
+                    showToast('✅ Notificações ativadas!', 'success');
+                } else {
+                    showToast('⚠️ Token não gerado. Tente novamente.', 'error');
+                }
+            } catch (err) {
+                console.error('Erro FCM:', err);
+                showToast('❌ Erro ao configurar notificações.', 'error');
+            }
+
+            atualizarBannerNotif();
+            verificarEpisodios();
         }
 
         function notificacoesAtivas() {
             return localStorage.getItem(STORAGE_NOTIF_ATIVA) === 'true'
+                && typeof Notification !== 'undefined'
                 && Notification.permission === 'granted';
         }
 
@@ -347,7 +405,6 @@
                 return;
             }
 
-            /* Estado padrão */
             icon.textContent = '🔔';
             titulo.textContent = 'Ativar notificações';
             texto.textContent = 'Receba um aviso quando sair episódio novo dos animes que você segue.';
@@ -356,9 +413,7 @@
             btn.disabled = false;
         }
 
-        /* ===================================================================
-           NOTIFICAÇÕES
-        =================================================================== */
+        /* ===== NOTIFICAÇÕES ===== */
         function getNotificacoes() {
             try { return JSON.parse(localStorage.getItem(STORAGE_NOTIF) || '[]'); }
             catch { return []; }
@@ -390,9 +445,7 @@
             render();
         }
 
-        /* ===================================================================
-           VERIFICAR EPISÓDIOS QUE JÁ SAÍRAM E DISPARAR NOTIFICAÇÃO
-        =================================================================== */
+        /* ===== VERIFICAR EPISÓDIOS ===== */
         async function verificarEpisodios() {
             if (!notificacoesAtivas()) return;
 
@@ -401,7 +454,6 @@
             const enviadas = getEnviadas();
             const agora = new Date();
 
-            /* Descobre dia da semana atual */
             const dias = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
             const diaHoje = dias[agora.getDay()];
             const horaAtual = agora.getHours() * 60 + agora.getMinutes();
@@ -410,25 +462,23 @@
                 if (!seguidos.includes(item.animeId)) continue;
                 if (item.dia !== diaHoje) continue;
 
-                /* Verifica legendado */
                 if (item.legendado && item.legendado.horario) {
                     const [h, m] = item.legendado.horario.split(':').map(Number);
                     const horarioMin = h * 60 + m;
                     const chave = `${item.id}-leg-ep${item.ep}`;
 
-                    if (horaAtual >= horarioMin && !enviadas.includes(chave)) {
+                    if (horaAtual >= horarioMin && horaAtual <= horarioMin + 35 && !enviadas.includes(chave)) {
                         await dispararNotificacao(item, 'legendado', item.legendado);
                         enviadas.push(chave);
                     }
                 }
 
-                /* Verifica dublado */
                 if (item.dublado && item.dublado.horario) {
                     const [h, m] = item.dublado.horario.split(':').map(Number);
                     const horarioMin = h * 60 + m;
                     const chave = `${item.id}-dub-ep${item.ep}`;
 
-                    if (horaAtual >= horarioMin && !enviadas.includes(chave)) {
+                    if (horaAtual >= horarioMin && horaAtual <= horarioMin + 35 && !enviadas.includes(chave)) {
                         await dispararNotificacao(item, 'dublado', item.dublado);
                         enviadas.push(chave);
                     }
@@ -446,7 +496,6 @@
             const titulo = `${emojiTipo} ${anime.titulo} — Ep. ${String(item.ep).padStart(2, '0')}`;
             const corpo = `${tipo === 'legendado' ? 'Legendado' : 'Dublado'} saiu! Já disponível na ${info.plataforma}.`;
 
-            /* Tenta enviar via service worker (mais confiável) */
             if (swRegistration && swRegistration.active) {
                 swRegistration.active.postMessage({
                     tipo: 'notificar',
@@ -456,22 +505,18 @@
                 });
                 console.log('📨 Notificação enviada via SW:', titulo);
             } else {
-                /* Fallback: notificação direta */
                 try {
                     new Notification(titulo, {
                         body: corpo,
                         icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%232b7fff"/><text x="50" y="68" font-size="52" font-family="Arial" font-weight="bold" fill="white" text-anchor="middle">AV</text></svg>'
                     });
-                    console.log('📨 Notificação enviada direta:', titulo);
                 } catch (err) {
                     console.error('Erro ao notificar:', err);
                 }
             }
         }
 
-        /* ===================================================================
-           RENDER
-        =================================================================== */
+        /* ===== RENDER ===== */
         const DIAS_LABEL = {
             segunda: 'Segunda', terca: 'Terça', quarta: 'Quarta',
             quinta: 'Quinta', sexta: 'Sexta', sabado: 'Sábado', domingo: 'Domingo'
@@ -582,9 +627,7 @@
             grid.innerHTML = cards.join('');
         }
 
-        /* ===================================================================
-           INICIALIZAÇÃO
-        =================================================================== */
+        /* ===== INICIALIZAÇÃO ===== */
         window.addEventListener('focus', () => {
             render();
             verificarEpisodios();
@@ -594,7 +637,6 @@
             swRegistration = await registrarServiceWorker();
             atualizarBannerNotif();
             render();
-            /* Verifica episódios a cada 60 segundos enquanto a página estiver aberta */
             setInterval(verificarEpisodios, 60000);
             verificarEpisodios();
         });
