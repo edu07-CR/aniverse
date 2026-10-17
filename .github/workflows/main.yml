@@ -20,4 +20,4 @@ jobs:
       - name: Rodar script
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-        run: node tornar-admin.js
+        run: node ../../tornar-admin.js
