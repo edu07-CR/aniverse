@@ -7,10 +7,7 @@
     <meta name="theme-color" content="#0b0e14">
     <title>AniVerse - Meus Animes</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%238b5cf6'/><text x='50' y='68' font-size='52' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'>AV</text></svg>">
-    
-    <!-- Manifest para PWA (necessário para iOS) -->
     <link rel="manifest" href="manifest.json">
-
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         :root {
@@ -24,13 +21,8 @@
         }
         body { background-color: var(--bg); color: var(--text); padding-bottom: 50px; }
 
-        header {
-            background-color: var(--bg-2); padding: 15px 30px;
-            display: flex; align-items: center; justify-content: space-between;
-            border-bottom: 1px solid var(--border);
-            position: sticky; top: 0; z-index: 100;
-            flex-wrap: wrap; gap: 15px;
-        }
+        /* NAVBAR (Mesmo padrão) */
+        header { background-color: var(--bg-2); padding: 15px 30px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 15px; }
         .logo-area { display: flex; align-items: center; gap: 10px; }
         .logo { background-color: var(--blue); color: white; font-weight: bold; padding: 5px 10px; border-radius: 6px; font-size: 18px; }
         .brand-name { font-size: 20px; font-weight: bold; }
@@ -42,139 +34,62 @@
         nav a.admin-link { color: var(--primary); }
         .menu-toggle { display: none; background: var(--bg-3); border: 1px solid var(--border-2); color: white; font-size: 20px; padding: 6px 12px; border-radius: 8px; cursor: pointer; }
 
+        /* MENU DE USUÁRIO */
+        .user-menu-container { position: relative; }
+        .user-profile { background-color: var(--bg-3); padding: 6px 12px; border-radius: 20px; display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; transition: background 0.2s; border: 1px solid var(--border-2); }
+        .user-profile:hover { background: #252d3d; }
+        .user-dropdown { position: absolute; top: 100%; right: 0; margin-top: 8px; background: var(--bg-2); border: 1px solid var(--border-2); border-radius: 8px; padding: 8px; min-width: 200px; display: none; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 101; }
+        .user-dropdown.open { display: block; }
+        .user-email { padding: 8px 12px; font-size: 12px; color: var(--text-muted); border-bottom: 1px solid var(--border); margin-bottom: 5px; word-break: break-all; }
+        .btn-dropdown { display: block; width: 100%; text-align: left; background: transparent; color: var(--text); border: none; padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; transition: background 0.2s; }
+        .btn-dropdown:hover { background: var(--bg-3); }
+        .btn-dropdown.danger { color: var(--danger); }
+        .btn-dropdown.danger:hover { background: rgba(239, 68, 68, 0.1); }
+
         .container { max-width: 1100px; margin: 20px auto; padding: 0 20px; }
         .page-title { font-size: 24px; font-weight: bold; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
         .page-subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 25px; }
 
-        /* Banner de notificação */
-        .notif-banner {
-            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(56, 189, 248, 0.1));
-            border: 1px solid var(--primary);
-            border-radius: 12px;
-            padding: 18px;
-            margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-            animation: fadeIn 0.3s ease;
-        }
+        .notif-banner { background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(56, 189, 248, 0.1)); border: 1px solid var(--primary); border-radius: 12px; padding: 18px; margin-bottom: 25px; display: flex; align-items: center; gap: 15px; flex-wrap: wrap; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         .notif-banner-icon { font-size: 36px; flex-shrink: 0; }
         .notif-banner-info { flex: 1; min-width: 200px; }
         .notif-banner-info strong { display: block; font-size: 15px; margin-bottom: 4px; }
         .notif-banner-info p { font-size: 13px; color: var(--text-muted); line-height: 1.4; }
-        .notif-banner-btn {
-            background: var(--primary); color: white;
-            border: none; padding: 12px 22px;
-            border-radius: 8px; font-weight: bold; font-size: 14px;
-            cursor: pointer; transition: all 0.2s;
-            white-space: nowrap;
-            display: flex; align-items: center; gap: 8px;
-        }
+        .notif-banner-btn { background: var(--primary); color: white; border: none; padding: 12px 22px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; transition: all 0.2s; white-space: nowrap; display: flex; align-items: center; gap: 8px; }
         .notif-banner-btn:hover { background: var(--primary-hover); transform: translateY(-2px); }
-        .notif-banner-btn.ativo {
-            background: var(--success);
-            cursor: default;
-        }
+        .notif-banner-btn.ativo { background: var(--success); cursor: default; }
         .notif-banner-btn.ativo:hover { transform: none; }
         .notif-banner-btn:disabled { opacity: 0.7; cursor: not-allowed; }
 
-        /* Stats */
-        .stats-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 12px; margin-bottom: 30px;
-        }
-        .stat-card {
-            background: linear-gradient(135deg, var(--bg-2), var(--bg-3));
-            border: 1px solid var(--border); border-radius: 12px;
-            padding: 16px; display: flex; flex-direction: column; gap: 4px;
-        }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 30px; }
+        .stat-card { background: linear-gradient(135deg, var(--bg-2), var(--bg-3)); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 4px; }
         .stat-icon { font-size: 22px; }
         .stat-number { font-size: 24px; font-weight: 800; }
         .stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: bold; }
 
-        .section-header {
-            font-size: 16px; font-weight: bold; margin-bottom: 15px;
-            display: flex; align-items: center; gap: 8px;
-        }
-
-        .animes-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .anime-card {
-            background: var(--bg-2);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 12px;
-            display: flex;
-            gap: 12px;
-            transition: all 0.2s;
-            animation: fadeIn 0.3s ease;
-        }
-        .anime-card:hover {
-            border-color: var(--primary);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.2);
-        }
-        .anime-card img {
-            width: 70px; height: 95px; object-fit: cover;
-            border-radius: 8px; flex-shrink: 0;
-            border: 1px solid var(--border-2);
-        }
+        .section-header { font-size: 16px; font-weight: bold; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .animes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .anime-card { background: var(--bg-2); border: 1px solid var(--border); border-radius: 12px; padding: 12px; display: flex; gap: 12px; transition: all 0.2s; animation: fadeIn 0.3s ease; }
+        .anime-card:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(139, 92, 246, 0.2); }
+        .anime-card img { width: 70px; height: 95px; object-fit: cover; border-radius: 8px; flex-shrink: 0; border: 1px solid var(--border-2); }
         .anime-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
-        .anime-info strong {
-            font-size: 14px; line-height: 1.3;
-            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
+        .anime-info strong { font-size: 14px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .anime-meta { font-size: 12px; color: var(--text-muted); }
         .anime-badges { display: flex; flex-direction: column; gap: 4px; margin-top: 4px; }
-        .badge-small {
-            display: inline-flex; align-items: center; gap: 5px;
-            padding: 3px 8px; border-radius: 6px;
-            font-size: 10px; font-weight: bold;
-            width: fit-content;
-            border: 1px solid;
-        }
+        .badge-small { display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: bold; width: fit-content; border: 1px solid; }
         .badge-small.legendado { background: rgba(34, 197, 94, 0.1); border-color: rgba(34, 197, 94, 0.4); color: #86efac; }
         .badge-small.dublado { background: rgba(234, 179, 8, 0.1); border-color: rgba(234, 179, 8, 0.4); color: #fde047; }
         .badge-small.dia { background: rgba(139, 92, 246, 0.1); border-color: rgba(139, 92, 246, 0.4); color: #c4b5fd; }
 
-        .btn-remove {
-            background: transparent;
-            border: 1px solid var(--border-2);
-            color: var(--text-muted);
-            padding: 6px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 11px;
-            font-weight: bold;
-            transition: all 0.2s;
-            margin-top: auto;
-            align-self: flex-start;
-        }
+        .btn-remove { background: transparent; border: 1px solid var(--border-2); color: var(--text-muted); padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; transition: all 0.2s; margin-top: auto; align-self: flex-start; }
         .btn-remove:hover { border-color: var(--danger); color: var(--danger); }
 
-        .empty-state {
-            text-align: center; padding: 60px 20px;
-            color: var(--text-muted); font-size: 14px;
-            border: 1px dashed var(--border-2); border-radius: 12px;
-            background: var(--bg-2);
-        }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); font-size: 14px; border: 1px dashed var(--border-2); border-radius: 12px; background: var(--bg-2); }
         .empty-state span.icon { display: block; font-size: 56px; margin-bottom: 15px; opacity: 0.6; }
         .empty-state h3 { font-size: 18px; color: var(--text); margin-bottom: 8px; font-weight: bold; }
         .empty-state p { margin-bottom: 20px; max-width: 400px; margin-left: auto; margin-right: auto; }
-        .btn-explore {
-            display: inline-block; background: var(--primary); color: white;
-            padding: 10px 22px; border-radius: 8px; text-decoration: none;
-            font-weight: bold; font-size: 13px;
-            transition: background 0.2s, transform 0.2s;
-        }
+        .btn-explore { display: inline-block; background: var(--primary); color: white; padding: 10px 22px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 13px; transition: background 0.2s, transform 0.2s; }
         .btn-explore:hover { background: var(--primary-hover); transform: translateY(-2px); }
 
         .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
@@ -218,6 +133,20 @@
             <a href="meus-animes.html" class="active">🔔 Meus Animes</a>
             <a href="admin.html" class="admin-link">⚙️ Admin</a>
         </nav>
+        <div class="search-user">
+            <!-- MENU DE USUÁRIO -->
+            <div class="user-menu-container">
+                <div class="user-profile" onclick="toggleUserMenu()">
+                    <span>🦊</span>
+                    <strong id="headerUserName">Carregando...</strong>
+                </div>
+                <div class="user-dropdown" id="userDropdown">
+                    <div class="user-email" id="headerUserEmail"></div>
+                    <button class="btn-dropdown" onclick="sair()">🚪 Sair</button>
+                    <button class="btn-dropdown danger" onclick="deletarConta()">🗑️ Excluir Conta</button>
+                </div>
+            </div>
+        </div>
     </header>
 
     <div class="container">
@@ -243,12 +172,14 @@
 
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- ===== Firebase Cloud Messaging ===== -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
         import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
+        import { getAuth, onAuthStateChanged, signOut, deleteUser } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+        import { deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+        // COLE SUA CONFIGURAÇÃO AQUI
         const firebaseConfig = {
             apiKey: "AIzaSyCOdEgBjNHqlEl_YbH93i3VBasfss5QeTs",
             authDomain: "aniverse-fae73.firebaseapp.com",
@@ -264,12 +195,49 @@
             const app = initializeApp(firebaseConfig);
             const db = getFirestore(app);
             const messaging = getMessaging(app);
+            const auth = getAuth(app);
 
             window.aniverseFCM = { db, messaging, doc, setDoc, getToken, VAPID_KEY };
+            window.aniverseAuth = { auth, signOut, deleteUser, db, doc, deleteDoc };
             console.log('✅ Firebase inicializado');
+
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    const nome = user.displayName || user.email.split('@')[0];
+                    document.getElementById('headerUserName').textContent = nome;
+                    document.getElementById('headerUserEmail').textContent = user.email;
+                    window.currentUser = user;
+                } else {
+                    window.location.href = 'index.html';
+                }
+            });
         } catch (err) {
             console.error('❌ Erro ao inicializar Firebase:', err);
         }
+
+        window.toggleUserMenu = () => { document.getElementById('userDropdown').classList.toggle('open'); };
+        document.addEventListener('click', (e) => {
+            const container = document.querySelector('.user-menu-container');
+            if (container && !container.contains(e.target)) document.getElementById('userDropdown').classList.remove('open');
+        });
+
+        window.sair = async () => { await window.aniverseAuth.signOut(window.aniverseAuth.auth); window.location.href = 'index.html'; };
+        window.deletarConta = async () => {
+            if (confirm('Tem certeza absoluta? Isso apagará sua conta e todos os seus dados.')) {
+                const user = window.currentUser;
+                if (user) {
+                    try {
+                        await window.aniverseAuth.deleteDoc(window.aniverseAuth.doc(window.aniverseAuth.db, "usuarios", user.uid));
+                        await window.aniverseAuth.deleteUser(user);
+                        alert('Sua conta foi excluída.');
+                        window.location.href = 'index.html';
+                    } catch (error) {
+                        console.error(error);
+                        alert('Erro ao excluir. Faça login novamente e tente de novo.');
+                    }
+                }
+            }
+        };
     </script>
 
     <script src="animes.js"></script>
@@ -281,98 +249,51 @@
         const STORAGE_NOTIF_ENVIADAS = 'aniverse_notif_enviadas';
 
         let swRegistration = null;
-
-        function toggleMenu() {
-            document.getElementById('mainNav').classList.toggle('open');
-        }
-
+        function toggleMenu() { document.getElementById('mainNav').classList.toggle('open'); }
         function showToast(msg, tipo = '') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             toast.className = 'toast ' + tipo;
             toast.textContent = msg;
             container.appendChild(toast);
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transition = 'opacity 0.3s';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
+            setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
-        /* ===== REGISTRO DO SERVICE WORKER ===== */
         async function registrarServiceWorker() {
-            if (!('serviceWorker' in navigator)) {
-                console.warn('Service Worker não suportado');
-                return null;
-            }
+            if (!('serviceWorker' in navigator)) return null;
             try {
                 const reg = await navigator.serviceWorker.register('sw.js');
-                console.log('✅ Service Worker registrado:', reg);
                 return reg;
-            } catch (err) {
-                console.error('❌ Erro ao registrar SW:', err);
-                return null;
-            }
+            } catch (err) { return null; }
         }
 
-        /* ===== ATIVAR NOTIFICAÇÕES ===== */
         async function ativarNotificacoes() {
-            if (!('Notification' in window)) {
-                showToast('❌ Seu navegador não suporta notificações.', 'error');
-                return;
-            }
-
+            if (!('Notification' in window)) { showToast('❌ Seu navegador não suporta notificações.', 'error'); return; }
             const permissao = await Notification.requestPermission();
-
-            if (permissao !== 'granted') {
-                showToast('❌ Permissão não concedida.', 'error');
-                return;
-            }
-
+            if (permissao !== 'granted') { showToast('❌ Permissão não concedida.', 'error'); return; }
             localStorage.setItem(STORAGE_NOTIF_ATIVA, 'true');
 
             try {
-                if (!window.aniverseFCM) {
-                    showToast('⚠️ Firebase não carregou. Recarregue a página.', 'error');
-                    atualizarBannerNotif();
-                    return;
-                }
-
+                if (!window.aniverseFCM) { showToast('⚠️ Firebase não carregou.', 'error'); atualizarBannerNotif(); return; }
                 const { messaging, db, doc, setDoc, getToken, VAPID_KEY } = window.aniverseFCM;
                 const token = await getToken(messaging, { vapidKey: VAPID_KEY });
 
                 if (token) {
-                    console.log('✅ Token FCM:', token);
-
-                    let userId = localStorage.getItem('aniverse_user_id');
-                    if (!userId) {
-                        userId = 'user_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
-                        localStorage.setItem('aniverse_user_id', userId);
-                    }
-
+                    const userId = window.currentUser.uid;
                     await setDoc(doc(db, 'usuarios', userId), {
                         fcmToken: token,
                         animesSeguidos: getNotificacoes(),
                         atualizadoEm: new Date().toISOString()
                     }, { merge: true });
-
                     showToast('✅ Notificações ativadas!', 'success');
-                } else {
-                    showToast('⚠️ Token não gerado. Tente novamente.', 'error');
-                }
-            } catch (err) {
-                console.error('Erro FCM:', err);
-                showToast('❌ Erro ao configurar notificações.', 'error');
-            }
-
+                } else { showToast('⚠️ Token não gerado.', 'error'); }
+            } catch (err) { showToast('❌ Erro ao configurar notificações.', 'error'); }
             atualizarBannerNotif();
             verificarEpisodios();
         }
 
         function notificacoesAtivas() {
-            return localStorage.getItem(STORAGE_NOTIF_ATIVA) === 'true'
-                && typeof Notification !== 'undefined'
-                && Notification.permission === 'granted';
+            return localStorage.getItem(STORAGE_NOTIF_ATIVA) === 'true' && typeof Notification !== 'undefined' && Notification.permission === 'granted';
         }
 
         function atualizarBannerNotif() {
@@ -382,12 +303,9 @@
             const texto = document.getElementById('notifTexto');
             const btn = document.getElementById('notifBtn');
 
-            // Detecta se é iPhone/iPad
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-            // Detecta se já está aberto como App instalado
             const isStandalone = window.navigator.standalone === true;
 
-            // 1. REGRA ESPECÍFICA PARA IOS (Se não estiver instalado)
             if (isIOS && !isStandalone) {
                 icon.textContent = '📲';
                 titulo.textContent = 'Instale o App no seu iPhone';
@@ -399,62 +317,25 @@
                 return;
             }
 
-            // 2. SE JÁ ESTIVER ATIVO
             if (notificacoesAtivas()) {
-                icon.textContent = '✅';
-                titulo.textContent = 'Notificações ativas!';
-                texto.textContent = 'Você vai receber um aviso quando sair episódio novo.';
-                btn.textContent = '✅ Ativado';
-                btn.classList.add('ativo');
-                btn.disabled = true;
-                btn.onclick = null;
-                return;
+                icon.textContent = '✅'; titulo.textContent = 'Notificações ativas!'; texto.textContent = 'Você vai receber um aviso quando sair episódio novo.';
+                btn.textContent = '✅ Ativado'; btn.classList.add('ativo'); btn.disabled = true; btn.onclick = null; return;
             }
 
-            // 3. SE A PERMISSÃO FOI BLOQUEADA PELO USUÁRIO
             if (typeof Notification !== 'undefined' && Notification.permission === 'denied') {
-                icon.textContent = '🔕';
-                titulo.textContent = 'Notificações bloqueadas';
-                texto.textContent = 'Você bloqueou as notificações. Libere nas configurações do navegador.';
-                btn.textContent = '🔒 Bloqueado';
-                btn.disabled = true;
-                btn.onclick = null;
-                return;
+                icon.textContent = '🔕'; titulo.textContent = 'Notificações bloqueadas'; texto.textContent = 'Você bloqueou as notificações. Libere nas configurações do navegador.';
+                btn.textContent = '🔒 Bloqueado'; btn.disabled = true; btn.onclick = null; return;
             }
 
-            // 4. ESTADO PADRÃO (Android, PC, ou iOS já instalado)
-            icon.textContent = '🔔';
-            titulo.textContent = 'Ativar notificações';
-            texto.textContent = 'Receba um aviso quando sair episódio novo.';
-            btn.textContent = '🔔 Ativar';
-            btn.classList.remove('ativo');
-            btn.disabled = false;
-            btn.onclick = ativarNotificacoes;
+            icon.textContent = '🔔'; titulo.textContent = 'Ativar notificações'; texto.textContent = 'Receba um aviso quando sair episódio novo.';
+            btn.textContent = '🔔 Ativar'; btn.classList.remove('ativo'); btn.disabled = false; btn.onclick = ativarNotificacoes;
         }
 
-        /* ===== NOTIFICAÇÕES ===== */
-        function getNotificacoes() {
-            try { return JSON.parse(localStorage.getItem(STORAGE_NOTIF) || '[]'); }
-            catch { return []; }
-        }
-        function salvarNotificacoes(lista) {
-            localStorage.setItem(STORAGE_NOTIF, JSON.stringify(lista));
-        }
-
-        function carregarAgendaCustom() {
-            try {
-                const raw = localStorage.getItem(STORAGE_AGENDA);
-                return raw ? JSON.parse(raw) : [];
-            } catch { return []; }
-        }
-
-        function getEnviadas() {
-            try { return JSON.parse(localStorage.getItem(STORAGE_NOTIF_ENVIADAS) || '[]'); }
-            catch { return []; }
-        }
-        function salvarEnviadas(lista) {
-            localStorage.setItem(STORAGE_NOTIF_ENVIADAS, JSON.stringify(lista.slice(-100)));
-        }
+        function getNotificacoes() { try { return JSON.parse(localStorage.getItem(STORAGE_NOTIF) || '[]'); } catch { return []; } }
+        function salvarNotificacoes(lista) { localStorage.setItem(STORAGE_NOTIF, JSON.stringify(lista)); }
+        function carregarAgendaCustom() { try { const raw = localStorage.getItem(STORAGE_AGENDA); return raw ? JSON.parse(raw) : []; } catch { return []; } }
+        function getEnviadas() { try { return JSON.parse(localStorage.getItem(STORAGE_NOTIF_ENVIADAS) || '[]'); } catch { return []; } }
+        function salvarEnviadas(lista) { localStorage.setItem(STORAGE_NOTIF_ENVIADAS, JSON.stringify(lista.slice(-100))); }
 
         function removerNotificacao(animeId) {
             const lista = getNotificacoes();
@@ -464,138 +345,78 @@
             render();
         }
 
-        /* ===== VERIFICAR EPISÓDIOS ===== */
         async function verificarEpisodios() {
             if (!notificacoesAtivas()) return;
-
             const agenda = carregarAgendaCustom();
             const seguidos = getNotificacoes();
             const enviadas = getEnviadas();
             const agora = new Date();
-
             const dias = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
             const diaHoje = dias[agora.getDay()];
             const horaAtual = agora.getHours() * 60 + agora.getMinutes();
 
             for (const item of agenda) {
-                if (!seguidos.includes(item.animeId)) continue;
-                if (item.dia !== diaHoje) continue;
-
+                if (!seguidos.includes(item.animeId) || item.dia !== diaHoje) continue;
                 if (item.legendado && item.legendado.horario) {
                     const [h, m] = item.legendado.horario.split(':').map(Number);
-                    const horarioMin = h * 60 + m;
-                    const chave = `${item.id}-leg-ep${item.ep}`;
-
+                    const horarioMin = h * 60 + m; const chave = `${item.id}-leg-ep${item.ep}`;
                     if (horaAtual >= horarioMin && horaAtual <= horarioMin + 35 && !enviadas.includes(chave)) {
-                        await dispararNotificacao(item, 'legendado', item.legendado);
-                        enviadas.push(chave);
+                        await dispararNotificacao(item, 'legendado', item.legendado); enviadas.push(chave);
                     }
                 }
-
                 if (item.dublado && item.dublado.horario) {
                     const [h, m] = item.dublado.horario.split(':').map(Number);
-                    const horarioMin = h * 60 + m;
-                    const chave = `${item.id}-dub-ep${item.ep}`;
-
+                    const horarioMin = h * 60 + m; const chave = `${item.id}-dub-ep${item.ep}`;
                     if (horaAtual >= horarioMin && horaAtual <= horarioMin + 35 && !enviadas.includes(chave)) {
-                        await dispararNotificacao(item, 'dublado', item.dublado);
-                        enviadas.push(chave);
+                        await dispararNotificacao(item, 'dublado', item.dublado); enviadas.push(chave);
                     }
                 }
             }
-
             salvarEnviadas(enviadas);
         }
 
         async function dispararNotificacao(item, tipo, info) {
             const anime = typeof getAnime === 'function' ? getAnime(item.animeId) : null;
             if (!anime) return;
-
             const emojiTipo = tipo === 'legendado' ? '🟢' : '🟡';
             const titulo = `${emojiTipo} ${anime.titulo} — Ep. ${String(item.ep).padStart(2, '0')}`;
             const corpo = `${tipo === 'legendado' ? 'Legendado' : 'Dublado'} saiu! Já disponível na ${info.plataforma}.`;
 
             if (swRegistration && swRegistration.active) {
-                swRegistration.active.postMessage({
-                    tipo: 'notificar',
-                    titulo: titulo,
-                    corpo: corpo,
-                    url: 'agenda.html'
-                });
-                console.log('📨 Notificação enviada via SW:', titulo);
+                swRegistration.active.postMessage({ tipo: 'notificar', titulo: titulo, corpo: corpo, url: 'agenda.html' });
             } else {
-                try {
-                    new Notification(titulo, {
-                        body: corpo,
-                        icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%232b7fff"/><text x="50" y="68" font-size="52" font-family="Arial" font-weight="bold" fill="white" text-anchor="middle">AV</text></svg>'
-                    });
-                } catch (err) {
-                    console.error('Erro ao notificar:', err);
-                }
+                try { new Notification(titulo, { body: corpo, icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%232b7fff"/><text x="50" y="68" font-size="52" font-family="Arial" font-weight="bold" fill="white" text-anchor="middle">AV</text></svg>' }); } catch (err) {}
             }
         }
 
-        /* ===== RENDER ===== */
-        const DIAS_LABEL = {
-            segunda: 'Segunda', terca: 'Terça', quarta: 'Quarta',
-            quinta: 'Quinta', sexta: 'Sexta', sabado: 'Sábado', domingo: 'Domingo'
-        };
+        const DIAS_LABEL = { segunda: 'Segunda', terca: 'Terça', quarta: 'Quarta', quinta: 'Quinta', sexta: 'Sexta', sabado: 'Sábado', domingo: 'Domingo' };
 
         function renderStats(animesSeguidos, agenda) {
             const grid = document.getElementById('statsGrid');
             const totalSeguidos = animesSeguidos.length;
-
             const hoje = new Date().getDay();
             const ordemDias = { domingo: 0, segunda: 1, terca: 2, quarta: 3, quinta: 4, sexta: 5, sabado: 6 };
-
-            let proximoDia = null;
-            let menorDiff = 8;
+            let proximoDia = null; let menorDiff = 8;
             agenda.forEach(item => {
                 if (!animesSeguidos.includes(item.animeId)) return;
-                const d = ordemDias[item.dia];
-                let diff = d - hoje;
+                const d = ordemDias[item.dia]; let diff = d - hoje;
                 if (diff < 0) diff += 7;
-                if (diff < menorDiff) {
-                    menorDiff = diff;
-                    proximoDia = item.dia;
-                }
+                if (diff < menorDiff) { menorDiff = diff; proximoDia = item.dia; }
             });
-
             grid.innerHTML = `
-                <div class="stat-card">
-                    <span class="stat-icon">🔔</span>
-                    <span class="stat-number">${totalSeguidos}</span>
-                    <span class="stat-label">Seguindo</span>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-icon">📅</span>
-                    <span class="stat-number">${proximoDia ? DIAS_LABEL[proximoDia] : '—'}</span>
-                    <span class="stat-label">Próximo lançamento</span>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-icon">📺</span>
-                    <span class="stat-number">${agenda.filter(a => animesSeguidos.includes(a.animeId)).length}</span>
-                    <span class="stat-label">Episódios na fila</span>
-                </div>
-            `;
+                <div class="stat-card"><span class="stat-icon">🔔</span><span class="stat-number">${totalSeguidos}</span><span class="stat-label">Seguindo</span></div>
+                <div class="stat-card"><span class="stat-icon">📅</span><span class="stat-number">${proximoDia ? DIAS_LABEL[proximoDia] : '—'}</span><span class="stat-label">Próximo</span></div>
+                <div class="stat-card"><span class="stat-icon">📺</span><span class="stat-number">${agenda.filter(a => animesSeguidos.includes(a.animeId)).length}</span><span class="stat-label">Na fila</span></div>`;
         }
 
         function render() {
             const notifs = getNotificacoes();
             const agenda = carregarAgendaCustom();
             const grid = document.getElementById('animesGrid');
-
             renderStats(notifs, agenda);
 
             if (notifs.length === 0) {
-                grid.innerHTML = `
-                    <div class="empty-state" style="grid-column: 1/-1;">
-                        <span class="icon">🔔</span>
-                        <h3>Você não segue nenhum anime ainda</h3>
-                        <p>Vá até a agenda e clique em "🔔 Me avisa" nos animes que você quer ser notificado.</p>
-                        <a href="agenda.html" class="btn-explore">Ver Agenda</a>
-                    </div>
-                `;
+                grid.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;"><span class="icon">🔔</span><h3>Você não segue nenhum anime ainda</h3><p>Vá até a agenda e clique em "🔔 Me avisa".</p><a href="agenda.html" class="btn-explore">Ver Agenda</a></div>`;
                 return;
             }
 
@@ -603,55 +424,35 @@
             notifs.forEach(animeId => {
                 const anime = typeof getAnime === 'function' ? getAnime(animeId) : null;
                 if (!anime) return;
-
                 const lancamentos = agenda.filter(a => a.animeId === animeId);
                 if (lancamentos.length === 0) return;
-
                 lancamentos.sort((a, b) => a.ep - b.ep);
                 const proximo = lancamentos[0];
-
                 const badges = [];
-                if (proximo.legendado) badges.push(`<span class="badge-small legendado">🟢 ${proximo.legendado.horario} • ${proximo.legendado.plataforma}</span>`);
-                if (proximo.dublado) badges.push(`<span class="badge-small dublado">🟡 ${proximo.dublado.horario} • ${proximo.dublado.plataforma}</span>`);
+                if (proximo.legendado) badges.push(`<span class="badge-small legendado">🟢 ${proximo.legendado.horario}</span>`);
+                if (proximo.dublado) badges.push(`<span class="badge-small dublado">🟡 ${proximo.dublado.horario}</span>`);
 
                 cards.push(`
                     <div class="anime-card">
-                        <img src="${anime.img}" alt="${anime.titulo}"
-                             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 70 95%22%3E%3Crect fill=%22%231a202c%22 width=%2270%22 height=%2295%22/%3E%3C/svg%3E'">
+                        <img src="${anime.img}" alt="${anime.titulo}">
                         <div class="anime-info">
                             <strong>${anime.titulo}</strong>
                             <span class="anime-meta">📺 Ep. ${String(proximo.ep).padStart(2, '0')}</span>
-                            <span class="badge-small dia">📅 ${DIAS_LABEL[proximo.dia] || proximo.dia}</span>
-                            <div class="anime-badges">
-                                ${badges.join('')}
-                            </div>
+                            <span class="badge-small dia">📅 ${DIAS_LABEL[proximo.dia]}</span>
+                            <div class="anime-badges">${badges.join('')}</div>
                             <button class="btn-remove" onclick="removerNotificacao('${animeId}')">✕ Remover</button>
                         </div>
-                    </div>
-                `);
+                    </div>`);
             });
 
             if (cards.length === 0) {
-                grid.innerHTML = `
-                    <div class="empty-state" style="grid-column: 1/-1;">
-                        <span class="icon">📭</span>
-                        <h3>Você segue animes, mas eles ainda não estão na agenda</h3>
-                        <p>Aguarde ou peça pra alguém adicionar. 😉</p>
-                        <a href="agenda.html" class="btn-explore">Ver Agenda</a>
-                    </div>
-                `;
+                grid.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;"><span class="icon">📭</span><h3>Animes fora da agenda</h3><a href="agenda.html" class="btn-explore">Ver Agenda</a></div>`;
                 return;
             }
-
             grid.innerHTML = cards.join('');
         }
 
-        /* ===== INICIALIZAÇÃO ===== */
-        window.addEventListener('focus', () => {
-            render();
-            verificarEpisodios();
-        });
-
+        window.addEventListener('focus', () => { render(); verificarEpisodios(); });
         window.addEventListener('load', async () => {
             swRegistration = await registrarServiceWorker();
             atualizarBannerNotif();
