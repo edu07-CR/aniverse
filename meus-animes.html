@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Meus animes - AniVerse">
+    <meta name="theme-color" content="#0b0e14">
     <title>AniVerse - Meus Animes</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%238b5cf6'/><text x='50' y='68' font-size='52' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'>AV</text></svg>">
     
-    <!-- PWA Manifest -->
+    <!-- Manifest para PWA (necessário para iOS) -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0b0e14">
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -63,7 +63,7 @@
         .notif-banner-icon { font-size: 36px; flex-shrink: 0; }
         .notif-banner-info { flex: 1; min-width: 200px; }
         .notif-banner-info strong { display: block; font-size: 15px; margin-bottom: 4px; }
-        .notif-banner-info p { font-size: 13px; color: var(--text-muted); }
+        .notif-banner-info p { font-size: 13px; color: var(--text-muted); line-height: 1.4; }
         .notif-banner-btn {
             background: var(--primary); color: white;
             border: none; padding: 12px 22px;
@@ -224,12 +224,6 @@
         <h1 class="page-title">🔔 Meus Animes</h1>
         <p class="page-subtitle">Ative as notificações e seja avisado quando sair episódio novo.</p>
 
-        <!-- Banner de Instalação PWA (mobile) -->
-        <div id="pwaBanner" style="display: none; background: #1e1b4b; border: 1px solid #4338ca; border-radius: 12px; padding: 15px; margin-bottom: 20px; text-align: center; align-items: center; gap: 10px; flex-direction: column;">
-            <p style="font-size: 14px; margin: 0;">📱 <strong>Para receber notificações no celular</strong>, instale o AniVerse no seu aparelho.</p>
-            <button onclick="instalarPWA()" style="background: #8b5cf6; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer;">📥 Instalar Aplicativo</button>
-        </div>
-
         <div class="notif-banner" id="notifBanner">
             <div class="notif-banner-icon" id="notifIcon">🔔</div>
             <div class="notif-banner-info">
@@ -287,7 +281,6 @@
         const STORAGE_NOTIF_ENVIADAS = 'aniverse_notif_enviadas';
 
         let swRegistration = null;
-        let deferredPrompt = null;
 
         function toggleMenu() {
             document.getElementById('mainNav').classList.toggle('open');
@@ -308,7 +301,10 @@
 
         /* ===== REGISTRO DO SERVICE WORKER ===== */
         async function registrarServiceWorker() {
-            if (!('serviceWorker' in navigator)) return null;
+            if (!('serviceWorker' in navigator)) {
+                console.warn('Service Worker não suportado');
+                return null;
+            }
             try {
                 const reg = await navigator.serviceWorker.register('sw.js');
                 console.log('✅ Service Worker registrado:', reg);
@@ -319,41 +315,10 @@
             }
         }
 
-        /* ===== INSTALAÇÃO PWA ===== */
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            // Mostra o banner se não estiver rodando como app instalado
-            if (!window.matchMedia('(display-mode: standalone)').matches) {
-                document.getElementById('pwaBanner').style.display = 'flex';
-            }
-        });
-
-        function instalarPWA() {
-            if (!deferredPrompt) {
-                showToast('⚠️ Para instalar, use o menu do navegador (⋮) e toque em "Instalar aplicativo".', 'error');
-                return;
-            }
-            deferredPrompt.prompt();
-            deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    console.log('✅ Usuário instalou o PWA');
-                }
-                deferredPrompt = null;
-                document.getElementById('pwaBanner').style.display = 'none';
-            });
-        }
-
         /* ===== ATIVAR NOTIFICAÇÕES ===== */
         async function ativarNotificacoes() {
             if (!('Notification' in window)) {
                 showToast('❌ Seu navegador não suporta notificações.', 'error');
-                return;
-            }
-
-            // Aviso para instalar no celular antes de pedir permissão
-            if (/Android|iPhone|iPad/i.test(navigator.userAgent) && !window.matchMedia('(display-mode: standalone)').matches) {
-                showToast('⚠️ No celular, instale o App (toque nos 3 pontinhos do navegador) para ativar!', 'error');
                 return;
             }
 
@@ -378,8 +343,12 @@
 
                 if (token) {
                     console.log('✅ Token FCM:', token);
-                    let userId = localStorage.getItem('aniverse_user_id') || 'user_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
-                    localStorage.setItem('aniverse_user_id', userId);
+
+                    let userId = localStorage.getItem('aniverse_user_id');
+                    if (!userId) {
+                        userId = 'user_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+                        localStorage.setItem('aniverse_user_id', userId);
+                    }
 
                     await setDoc(doc(db, 'usuarios', userId), {
                         fcmToken: token,
@@ -388,6 +357,8 @@
                     }, { merge: true });
 
                     showToast('✅ Notificações ativadas!', 'success');
+                } else {
+                    showToast('⚠️ Token não gerado. Tente novamente.', 'error');
                 }
             } catch (err) {
                 console.error('Erro FCM:', err);
@@ -405,28 +376,30 @@
         }
 
         function atualizarBannerNotif() {
+            const banner = document.getElementById('notifBanner');
             const icon = document.getElementById('notifIcon');
             const titulo = document.getElementById('notifTitulo');
             const texto = document.getElementById('notifTexto');
             const btn = document.getElementById('notifBtn');
 
-            if (!('Notification' in window)) {
-                icon.textContent = '❌';
-                titulo.textContent = 'Navegador não suporta';
-                texto.textContent = 'Seu navegador não tem suporte a notificações.';
-                btn.style.display = 'none';
+            // Detecta se é iPhone/iPad
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            // Detecta se já está aberto como App instalado
+            const isStandalone = window.navigator.standalone === true;
+
+            // 1. REGRA ESPECÍFICA PARA IOS (Se não estiver instalado)
+            if (isIOS && !isStandalone) {
+                icon.textContent = '📲';
+                titulo.textContent = 'Instale o App no seu iPhone';
+                texto.innerHTML = 'Para receber notificações no iOS, toque em <strong>Compartilhar</strong> (⬆️) e depois em <strong>"Adicionar à Tela de Início"</strong>. Depois, abra pelo ícone.';
+                btn.textContent = 'Como fazer';
+                btn.disabled = false;
+                btn.classList.remove('ativo');
+                btn.onclick = () => alert('Toque no botão Compartilhar (⬆️) na barra inferior do Safari, role para baixo e toque em "Adicionar à Tela de Início". Depois abra o AniVerse pelo ícone na sua tela.');
                 return;
             }
 
-            if (Notification.permission === 'denied') {
-                icon.textContent = '🔕';
-                titulo.textContent = 'Notificações bloqueadas';
-                texto.textContent = 'Libere nas configurações do navegador.';
-                btn.textContent = '🔒 Bloqueado';
-                btn.disabled = true;
-                return;
-            }
-
+            // 2. SE JÁ ESTIVER ATIVO
             if (notificacoesAtivas()) {
                 icon.textContent = '✅';
                 titulo.textContent = 'Notificações ativas!';
@@ -434,18 +407,32 @@
                 btn.textContent = '✅ Ativado';
                 btn.classList.add('ativo');
                 btn.disabled = true;
+                btn.onclick = null;
                 return;
             }
 
+            // 3. SE A PERMISSÃO FOI BLOQUEADA PELO USUÁRIO
+            if (typeof Notification !== 'undefined' && Notification.permission === 'denied') {
+                icon.textContent = '🔕';
+                titulo.textContent = 'Notificações bloqueadas';
+                texto.textContent = 'Você bloqueou as notificações. Libere nas configurações do navegador.';
+                btn.textContent = '🔒 Bloqueado';
+                btn.disabled = true;
+                btn.onclick = null;
+                return;
+            }
+
+            // 4. ESTADO PADRÃO (Android, PC, ou iOS já instalado)
             icon.textContent = '🔔';
             titulo.textContent = 'Ativar notificações';
             texto.textContent = 'Receba um aviso quando sair episódio novo.';
             btn.textContent = '🔔 Ativar';
             btn.classList.remove('ativo');
             btn.disabled = false;
+            btn.onclick = ativarNotificacoes;
         }
 
-        /* ===== NOTIFICAÇÕES LÓGICA ===== */
+        /* ===== NOTIFICAÇÕES ===== */
         function getNotificacoes() {
             try { return JSON.parse(localStorage.getItem(STORAGE_NOTIF) || '[]'); }
             catch { return []; }
@@ -453,10 +440,14 @@
         function salvarNotificacoes(lista) {
             localStorage.setItem(STORAGE_NOTIF, JSON.stringify(lista));
         }
+
         function carregarAgendaCustom() {
-            try { return JSON.parse(localStorage.getItem(STORAGE_AGENDA) || '[]'); }
-            catch { return []; }
+            try {
+                const raw = localStorage.getItem(STORAGE_AGENDA);
+                return raw ? JSON.parse(raw) : [];
+            } catch { return []; }
         }
+
         function getEnviadas() {
             try { return JSON.parse(localStorage.getItem(STORAGE_NOTIF_ENVIADAS) || '[]'); }
             catch { return []; }
@@ -473,6 +464,7 @@
             render();
         }
 
+        /* ===== VERIFICAR EPISÓDIOS ===== */
         async function verificarEpisodios() {
             if (!notificacoesAtivas()) return;
 
@@ -486,27 +478,32 @@
             const horaAtual = agora.getHours() * 60 + agora.getMinutes();
 
             for (const item of agenda) {
-                if (!seguidos.includes(item.animeId) || item.dia !== diaHoje) continue;
+                if (!seguidos.includes(item.animeId)) continue;
+                if (item.dia !== diaHoje) continue;
 
                 if (item.legendado && item.legendado.horario) {
                     const [h, m] = item.legendado.horario.split(':').map(Number);
                     const horarioMin = h * 60 + m;
                     const chave = `${item.id}-leg-ep${item.ep}`;
+
                     if (horaAtual >= horarioMin && horaAtual <= horarioMin + 35 && !enviadas.includes(chave)) {
                         await dispararNotificacao(item, 'legendado', item.legendado);
                         enviadas.push(chave);
                     }
                 }
+
                 if (item.dublado && item.dublado.horario) {
                     const [h, m] = item.dublado.horario.split(':').map(Number);
                     const horarioMin = h * 60 + m;
                     const chave = `${item.id}-dub-ep${item.ep}`;
+
                     if (horaAtual >= horarioMin && horaAtual <= horarioMin + 35 && !enviadas.includes(chave)) {
                         await dispararNotificacao(item, 'dublado', item.dublado);
                         enviadas.push(chave);
                     }
                 }
             }
+
             salvarEnviadas(enviadas);
         }
 
@@ -518,7 +515,6 @@
             const titulo = `${emojiTipo} ${anime.titulo} — Ep. ${String(item.ep).padStart(2, '0')}`;
             const corpo = `${tipo === 'legendado' ? 'Legendado' : 'Dublado'} saiu! Já disponível na ${info.plataforma}.`;
 
-            // IMPORTANTE: Usar o Service Worker para evitar bloqueio do Chrome Mobile
             if (swRegistration && swRegistration.active) {
                 swRegistration.active.postMessage({
                     tipo: 'notificar',
@@ -529,34 +525,58 @@
                 console.log('📨 Notificação enviada via SW:', titulo);
             } else {
                 try {
-                    new Notification(titulo, { body: corpo });
+                    new Notification(titulo, {
+                        body: corpo,
+                        icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%232b7fff"/><text x="50" y="68" font-size="52" font-family="Arial" font-weight="bold" fill="white" text-anchor="middle">AV</text></svg>'
+                    });
                 } catch (err) {
-                    console.error('Erro ao notificar localmente:', err);
+                    console.error('Erro ao notificar:', err);
                 }
             }
         }
 
         /* ===== RENDER ===== */
-        const DIAS_LABEL = { segunda: 'Segunda', terca: 'Terça', quarta: 'Quarta', quinta: 'Quinta', sexta: 'Sexta', sabado: 'Sábado', domingo: 'Domingo' };
+        const DIAS_LABEL = {
+            segunda: 'Segunda', terca: 'Terça', quarta: 'Quarta',
+            quinta: 'Quinta', sexta: 'Sexta', sabado: 'Sábado', domingo: 'Domingo'
+        };
 
         function renderStats(animesSeguidos, agenda) {
             const grid = document.getElementById('statsGrid');
+            const totalSeguidos = animesSeguidos.length;
+
             const hoje = new Date().getDay();
             const ordemDias = { domingo: 0, segunda: 1, terca: 2, quarta: 3, quinta: 4, sexta: 5, sabado: 6 };
 
-            let proximoDia = null, menorDiff = 8;
+            let proximoDia = null;
+            let menorDiff = 8;
             agenda.forEach(item => {
                 if (!animesSeguidos.includes(item.animeId)) return;
                 const d = ordemDias[item.dia];
                 let diff = d - hoje;
                 if (diff < 0) diff += 7;
-                if (diff < menorDiff) { menorDiff = diff; proximoDia = item.dia; }
+                if (diff < menorDiff) {
+                    menorDiff = diff;
+                    proximoDia = item.dia;
+                }
             });
 
             grid.innerHTML = `
-                <div class="stat-card"><span class="stat-icon">🔔</span><span class="stat-number">${animesSeguidos.length}</span><span class="stat-label">Seguindo</span></div>
-                <div class="stat-card"><span class="stat-icon">📅</span><span class="stat-number">${proximoDia ? DIAS_LABEL[proximoDia] : '—'}</span><span class="stat-label">Próximo lançamento</span></div>
-                <div class="stat-card"><span class="stat-icon">📺</span><span class="stat-number">${agenda.filter(a => animesSeguidos.includes(a.animeId)).length}</span><span class="stat-label">Episódios na fila</span></div>
+                <div class="stat-card">
+                    <span class="stat-icon">🔔</span>
+                    <span class="stat-number">${totalSeguidos}</span>
+                    <span class="stat-label">Seguindo</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">📅</span>
+                    <span class="stat-number">${proximoDia ? DIAS_LABEL[proximoDia] : '—'}</span>
+                    <span class="stat-label">Próximo lançamento</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">📺</span>
+                    <span class="stat-number">${agenda.filter(a => animesSeguidos.includes(a.animeId)).length}</span>
+                    <span class="stat-label">Episódios na fila</span>
+                </div>
             `;
         }
 
@@ -568,7 +588,14 @@
             renderStats(notifs, agenda);
 
             if (notifs.length === 0) {
-                grid.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;"><span class="icon">🔔</span><h3>Você não segue nenhum anime ainda</h3><p>Vá até a agenda e clique em "🔔 Me avisa" nos animes que você quer ser notificado.</p><a href="agenda.html" class="btn-explore">Ver Agenda</a></div>`;
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <span class="icon">🔔</span>
+                        <h3>Você não segue nenhum anime ainda</h3>
+                        <p>Vá até a agenda e clique em "🔔 Me avisa" nos animes que você quer ser notificado.</p>
+                        <a href="agenda.html" class="btn-explore">Ver Agenda</a>
+                    </div>
+                `;
                 return;
             }
 
@@ -576,6 +603,7 @@
             notifs.forEach(animeId => {
                 const anime = typeof getAnime === 'function' ? getAnime(animeId) : null;
                 if (!anime) return;
+
                 const lancamentos = agenda.filter(a => a.animeId === animeId);
                 if (lancamentos.length === 0) return;
 
@@ -588,12 +616,15 @@
 
                 cards.push(`
                     <div class="anime-card">
-                        <img src="${anime.img}" alt="${anime.titulo}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 70 95%22%3E%3Crect fill=%22%231a202c%22 width=%2270%22 height=%2295%22/%3E%3C/svg%3E'">
+                        <img src="${anime.img}" alt="${anime.titulo}"
+                             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 70 95%22%3E%3Crect fill=%22%231a202c%22 width=%2270%22 height=%2295%22/%3E%3C/svg%3E'">
                         <div class="anime-info">
                             <strong>${anime.titulo}</strong>
                             <span class="anime-meta">📺 Ep. ${String(proximo.ep).padStart(2, '0')}</span>
                             <span class="badge-small dia">📅 ${DIAS_LABEL[proximo.dia] || proximo.dia}</span>
-                            <div class="anime-badges">${badges.join('')}</div>
+                            <div class="anime-badges">
+                                ${badges.join('')}
+                            </div>
                             <button class="btn-remove" onclick="removerNotificacao('${animeId}')">✕ Remover</button>
                         </div>
                     </div>
@@ -601,14 +632,25 @@
             });
 
             if (cards.length === 0) {
-                grid.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;"><span class="icon">📭</span><h3>Você segue animes, mas eles ainda não estão na agenda</h3><p>Aguarde ou peça pra alguém adicionar. 😉</p><a href="agenda.html" class="btn-explore">Ver Agenda</a></div>`;
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <span class="icon">📭</span>
+                        <h3>Você segue animes, mas eles ainda não estão na agenda</h3>
+                        <p>Aguarde ou peça pra alguém adicionar. 😉</p>
+                        <a href="agenda.html" class="btn-explore">Ver Agenda</a>
+                    </div>
+                `;
                 return;
             }
+
             grid.innerHTML = cards.join('');
         }
 
         /* ===== INICIALIZAÇÃO ===== */
-        window.addEventListener('focus', () => { render(); verificarEpisodios(); });
+        window.addEventListener('focus', () => {
+            render();
+            verificarEpisodios();
+        });
 
         window.addEventListener('load', async () => {
             swRegistration = await registrarServiceWorker();
