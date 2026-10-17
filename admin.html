@@ -224,6 +224,17 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        window.forcarLimpezaELogout = () => {
+            localStorage.clear();
+            sessionStorage.clear();
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(registrations => {
+                    for(let r of registrations) r.unregister();
+                });
+            }
+            window.location.href = 'index.html?logout=true';
+        };
+
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 // Puxa o token para validar a Claim de Admin
@@ -249,7 +260,7 @@
                 document.getElementById('listaItens').innerHTML = ''; 
                 await carregarAgendaFirestore();
             } else {
-                window.location.href = 'index.html';
+                window.forcarLimpezaELogout();
             }
         });
 
@@ -276,7 +287,9 @@
             const container = document.querySelector('.user-menu-container');
             if (container && !container.contains(e.target)) document.getElementById('userDropdown').classList.remove('open');
         });
-        window.sair = async () => { await signOut(auth); window.location.href = 'index.html'; };
+        
+        window.sair = async () => { await signOut(auth); window.forcarLimpezaELogout(); };
+        
         window.deletarConta = async () => {
             if (confirm('Tem certeza absoluta? Isso apagará sua conta e todos os seus dados.')) {
                 const user = auth.currentUser;
@@ -285,7 +298,7 @@
                         await deleteDoc(doc(db, "usuarios", user.uid));
                         await deleteUser(user);
                         alert('Sua conta foi excluída.');
-                        window.location.href = 'index.html';
+                        window.forcarLimpezaELogout();
                     } catch (error) { alert('Erro ao excluir.'); }
                 }
             }
@@ -296,7 +309,7 @@
     <script>
         let editandoId = null; 
         let diaFiltroAtual = 'todos';
-        let agendaGlobal = []; // Agora a agenda vem do Firestore
+        let agendaGlobal = []; 
 
         function showToast(msg, tipo = '') {
             const container = document.getElementById('toastContainer');
@@ -309,7 +322,6 @@
         async function carregarAgendaFirestore() {
             try {
                 const { db, collection, getDocs } = window.aniverseFirestore || {};
-                // Puxa os animes da coleção "agenda" do Firebase
                 const querySnapshot = await getDocs(collection(db, "agenda"));
                 agendaGlobal = [];
                 querySnapshot.forEach((doc) => {
@@ -322,10 +334,8 @@
             }
         }
 
-        // Expõe o Firestore para o escopo global para usar na função acima
         window.aniverseFirestore = { db: null, collection: null, getDocs: null, doc: null, setDoc: null, deleteDoc: null };
 
-        // Pega as funções do módulo para o escopo global (hack simples para funcionar sem importar tudo de novo)
         import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js").then(module => {
             import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js").then(appModule => {
                 const app = appModule.getApps()[0];
@@ -387,7 +397,7 @@
                     showToast('✅ Anime adicionado!', 'success');
                 }
                 limparFormulario(); 
-                await carregarAgendaFirestore(); // Recarrega a lista atualizada
+                await carregarAgendaFirestore();
             } catch(e) { 
                 console.error(e); showToast('Erro ao salvar no banco.', 'error'); 
             }
