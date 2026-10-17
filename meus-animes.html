@@ -156,10 +156,9 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
         import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
         import { getAuth, onAuthStateChanged, signOut, deleteUser } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-        import { deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyCOdEgBjNHqlEl_YbH93i3VBasfss5QeTs", authDomain: "aniverse-fae73.firebaseapp.com", projectId: "aniverse-fae73", storageBucket: "aniverse-fae73.firebasestorage.app", messagingSenderId: "699188842665", appId: "1:699188842665:web:f29f6cbbc5b0c8a61c59b8" };
         const VAPID_KEY = "BE-aTK1J5J3WsmQDCUH0UP_QoFM_9LXzwG3zYM3FG2rbp2HwsdaNcMSfusJLlLng9BXfR3Xksx4SeCdQXr2GATvo";
@@ -224,7 +223,11 @@
             if (container && !container.contains(e.target)) document.getElementById('userDropdown').classList.remove('open');
         });
 
-        window.sair = async () => { await window.aniverseAuth.signOut(window.aniverseAuth.auth); window.forcarLimpezaELogout(); };
+        window.sair = async () => { 
+            await window.aniverseAuth.signOut(window.aniverseAuth.auth); 
+            window.forcarLimpezaELogout(); 
+        };
+        
         window.deletarConta = async () => {
             if (confirm('Tem certeza absoluta? Isso apagará sua conta e todos os seus dados.')) {
                 const user = window.currentUser;
@@ -234,7 +237,7 @@
                         await window.aniverseAuth.deleteUser(user);
                         alert('Sua conta foi excluída.');
                         window.forcarLimpezaELogout();
-                    } catch (error) { alert('Erro ao excluir.'); }
+                    } catch (error) { alert('Erro ao excluir. Faça login novamente.'); }
                 }
             }
         };
