@@ -21,7 +21,6 @@
         }
         body { background-color: var(--bg); color: var(--text); padding-bottom: 50px; }
 
-        /* NAVBAR (Mesmo padrão) */
         header { background-color: var(--bg-2); padding: 15px 30px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 15px; }
         .logo-area { display: flex; align-items: center; gap: 10px; }
         .logo { background-color: var(--blue); color: white; font-weight: bold; padding: 5px 10px; border-radius: 6px; font-size: 18px; }
@@ -34,17 +33,22 @@
         nav a.admin-link { color: var(--primary); }
         .menu-toggle { display: none; background: var(--bg-3); border: 1px solid var(--border-2); color: white; font-size: 20px; padding: 6px 12px; border-radius: 8px; cursor: pointer; }
 
-        /* MENU DE USUÁRIO */
+        /* MENU DE USUÁRIO COM AVATAR */
         .user-menu-container { position: relative; }
         .user-profile { background-color: var(--bg-3); padding: 6px 12px; border-radius: 20px; display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; transition: background 0.2s; border: 1px solid var(--border-2); }
         .user-profile:hover { background: #252d3d; }
-        .user-dropdown { position: absolute; top: 100%; right: 0; margin-top: 8px; background: var(--bg-2); border: 1px solid var(--border-2); border-radius: 8px; padding: 8px; min-width: 200px; display: none; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 101; }
+        .user-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; overflow: hidden; flex-shrink: 0; }
+        .user-dropdown { position: absolute; top: 100%; right: 0; margin-top: 8px; background: var(--bg-2); border: 1px solid var(--border-2); border-radius: 8px; padding: 8px; min-width: 220px; display: none; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 101; }
         .user-dropdown.open { display: block; }
         .user-email { padding: 8px 12px; font-size: 12px; color: var(--text-muted); border-bottom: 1px solid var(--border); margin-bottom: 5px; word-break: break-all; }
         .btn-dropdown { display: block; width: 100%; text-align: left; background: transparent; color: var(--text); border: none; padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; transition: background 0.2s; }
         .btn-dropdown:hover { background: var(--bg-3); }
         .btn-dropdown.danger { color: var(--danger); }
         .btn-dropdown.danger:hover { background: rgba(239, 68, 68, 0.1); }
+        .emoji-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; padding: 10px; border-top: 1px solid var(--border); margin-top: 5px; }
+        .emoji-btn { background: var(--bg-3); border: 1px solid transparent; border-radius: 6px; font-size: 18px; cursor: pointer; padding: 5px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .emoji-btn:hover { background: var(--border-2); }
+        .emoji-btn.selected { border-color: var(--primary); background: rgba(139, 92, 246, 0.2); }
 
         .container { max-width: 1100px; margin: 20px auto; padding: 0 20px; }
         .page-title { font-size: 24px; font-weight: bold; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
@@ -134,15 +138,22 @@
             <a href="admin.html" class="admin-link">⚙️ Admin</a>
         </nav>
         <div class="search-user">
-            <!-- MENU DE USUÁRIO -->
             <div class="user-menu-container">
                 <div class="user-profile" onclick="toggleUserMenu()">
-                    <span>🦊</span>
+                    <div class="user-avatar" id="headerAvatar">AV</div>
                     <strong id="headerUserName">Carregando...</strong>
                 </div>
                 <div class="user-dropdown" id="userDropdown">
                     <div class="user-email" id="headerUserEmail"></div>
-                    <button class="btn-dropdown" onclick="sair()">🚪 Sair</button>
+                    <div style="padding: 8px 12px 0; font-size: 11px; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Seu Avatar:</div>
+                    <div class="emoji-grid" id="emojiGrid">
+                        <button class="emoji-btn selected" onclick="salvarAvatar('AV')">AV</button>
+                        <button class="emoji-btn" onclick="salvarAvatar('🦊')">🦊</button>
+                        <button class="emoji-btn" onclick="salvarAvatar('🐱')">🐱</button>
+                        <button class="emoji-btn" onclick="salvarAvatar('🐼')">🐼</button>
+                        <button class="emoji-btn" onclick="salvarAvatar('🔥')">🔥</button>
+                    </div>
+                    <button class="btn-dropdown" style="margin-top: 5px;" onclick="sair()">🚪 Sair</button>
                     <button class="btn-dropdown danger" onclick="deletarConta()">🗑️ Excluir Conta</button>
                 </div>
             </div>
@@ -159,13 +170,10 @@
                 <strong id="notifTitulo">Ativar notificações</strong>
                 <p id="notifTexto">Receba um aviso quando sair episódio novo dos animes que você segue.</p>
             </div>
-            <button class="notif-banner-btn" id="notifBtn" onclick="ativarNotificacoes()">
-                🔔 Ativar
-            </button>
+            <button class="notif-banner-btn" id="notifBtn" onclick="ativarNotificacoes()">🔔 Ativar</button>
         </div>
 
         <div class="stats-grid" id="statsGrid"></div>
-
         <div class="section-header">📅 Próximos Lançamentos</div>
         <div class="animes-grid" id="animesGrid"></div>
     </div>
@@ -177,9 +185,8 @@
         import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
         import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
         import { getAuth, onAuthStateChanged, signOut, deleteUser } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-        import { deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-        // COLE SUA CONFIGURAÇÃO AQUI
         const firebaseConfig = {
             apiKey: "AIzaSyCOdEgBjNHqlEl_YbH93i3VBasfss5QeTs",
             authDomain: "aniverse-fae73.firebaseapp.com",
@@ -188,7 +195,6 @@
             messagingSenderId: "699188842665",
             appId: "1:699188842665:web:f29f6cbbc5b0c8a61c59b8"
         };
-
         const VAPID_KEY = "BE-aTK1J5J3WsmQDCUH0UP_QoFM_9LXzwG3zYM3FG2rbp2HwsdaNcMSfusJLlLng9BXfR3Xksx4SeCdQXr2GATvo";
 
         try {
@@ -196,24 +202,43 @@
             const db = getFirestore(app);
             const messaging = getMessaging(app);
             const auth = getAuth(app);
-
             window.aniverseFCM = { db, messaging, doc, setDoc, getToken, VAPID_KEY };
-            window.aniverseAuth = { auth, signOut, deleteUser, db, doc, deleteDoc };
-            console.log('✅ Firebase inicializado');
+            window.aniverseAuth = { auth, signOut, deleteUser, db, doc, deleteDoc, setDoc, getDoc };
 
-            onAuthStateChanged(auth, (user) => {
+            onAuthStateChanged(auth, async (user) => {
                 if (user) {
                     const nome = user.displayName || user.email.split('@')[0];
                     document.getElementById('headerUserName').textContent = nome;
                     document.getElementById('headerUserEmail').textContent = user.email;
                     window.currentUser = user;
+
+                    const docRef = doc(db, "usuarios", user.uid);
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists() && docSnap.data().avatar) atualizarAvatarUI(docSnap.data().avatar);
+                    else atualizarAvatarUI('AV');
                 } else {
                     window.location.href = 'index.html';
                 }
             });
-        } catch (err) {
-            console.error('❌ Erro ao inicializar Firebase:', err);
+        } catch (err) {}
+
+        function atualizarAvatarUI(avatar) {
+            const el = document.getElementById('headerAvatar');
+            el.innerHTML = avatar;
+            el.style.background = avatar === 'AV' ? 'var(--primary)' : 'var(--bg-3)';
+            document.querySelectorAll('.emoji-btn').forEach(btn => {
+                if(btn.textContent.trim() === avatar) btn.classList.add('selected');
+                else btn.classList.remove('selected');
+            });
         }
+
+        window.salvarAvatar = async (avatar) => {
+            if (!window.currentUser) return;
+            try {
+                await window.aniverseAuth.setDoc(window.aniverseAuth.doc(window.aniverseAuth.db, "usuarios", window.currentUser.uid), { avatar: avatar }, { merge: true });
+                atualizarAvatarUI(avatar);
+            } catch (error) {}
+        };
 
         window.toggleUserMenu = () => { document.getElementById('userDropdown').classList.toggle('open'); };
         document.addEventListener('click', (e) => {
@@ -231,10 +256,7 @@
                         await window.aniverseAuth.deleteUser(user);
                         alert('Sua conta foi excluída.');
                         window.location.href = 'index.html';
-                    } catch (error) {
-                        console.error(error);
-                        alert('Erro ao excluir. Faça login novamente e tente de novo.');
-                    }
+                    } catch (error) { alert('Erro ao excluir.'); }
                 }
             }
         };
@@ -253,18 +275,14 @@
         function showToast(msg, tipo = '') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
-            toast.className = 'toast ' + tipo;
-            toast.textContent = msg;
+            toast.className = 'toast ' + tipo; toast.textContent = msg;
             container.appendChild(toast);
             setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
         async function registrarServiceWorker() {
             if (!('serviceWorker' in navigator)) return null;
-            try {
-                const reg = await navigator.serviceWorker.register('sw.js');
-                return reg;
-            } catch (err) { return null; }
+            try { return await navigator.serviceWorker.register('sw.js'); } catch (err) { return null; }
         }
 
         async function ativarNotificacoes() {
@@ -272,61 +290,44 @@
             const permissao = await Notification.requestPermission();
             if (permissao !== 'granted') { showToast('❌ Permissão não concedida.', 'error'); return; }
             localStorage.setItem(STORAGE_NOTIF_ATIVA, 'true');
-
             try {
                 if (!window.aniverseFCM) { showToast('⚠️ Firebase não carregou.', 'error'); atualizarBannerNotif(); return; }
                 const { messaging, db, doc, setDoc, getToken, VAPID_KEY } = window.aniverseFCM;
                 const token = await getToken(messaging, { vapidKey: VAPID_KEY });
-
                 if (token) {
-                    const userId = window.currentUser.uid;
-                    await setDoc(doc(db, 'usuarios', userId), {
-                        fcmToken: token,
-                        animesSeguidos: getNotificacoes(),
-                        atualizadoEm: new Date().toISOString()
+                    await setDoc(doc(db, 'usuarios', window.currentUser.uid), {
+                        fcmToken: token, animesSeguidos: getNotificacoes(), atualizadoEm: new Date().toISOString()
                     }, { merge: true });
                     showToast('✅ Notificações ativadas!', 'success');
                 } else { showToast('⚠️ Token não gerado.', 'error'); }
             } catch (err) { showToast('❌ Erro ao configurar notificações.', 'error'); }
-            atualizarBannerNotif();
-            verificarEpisodios();
+            atualizarBannerNotif(); verificarEpisodios();
         }
 
-        function notificacoesAtivas() {
-            return localStorage.getItem(STORAGE_NOTIF_ATIVA) === 'true' && typeof Notification !== 'undefined' && Notification.permission === 'granted';
-        }
+        function notificacoesAtivas() { return localStorage.getItem(STORAGE_NOTIF_ATIVA) === 'true' && typeof Notification !== 'undefined' && Notification.permission === 'granted'; }
 
         function atualizarBannerNotif() {
-            const banner = document.getElementById('notifBanner');
-            const icon = document.getElementById('notifIcon');
-            const titulo = document.getElementById('notifTitulo');
-            const texto = document.getElementById('notifTexto');
+            const banner = document.getElementById('notifBanner'); const icon = document.getElementById('notifIcon');
+            const titulo = document.getElementById('notifTitulo'); const texto = document.getElementById('notifTexto');
             const btn = document.getElementById('notifBtn');
-
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
             const isStandalone = window.navigator.standalone === true;
 
             if (isIOS && !isStandalone) {
-                icon.textContent = '📲';
-                titulo.textContent = 'Instale o App no seu iPhone';
+                icon.textContent = '📲'; titulo.textContent = 'Instale o App no seu iPhone';
                 texto.innerHTML = 'Para receber notificações no iOS, toque em <strong>Compartilhar</strong> (⬆️) e depois em <strong>"Adicionar à Tela de Início"</strong>. Depois, abra pelo ícone.';
-                btn.textContent = 'Como fazer';
-                btn.disabled = false;
-                btn.classList.remove('ativo');
+                btn.textContent = 'Como fazer'; btn.disabled = false; btn.classList.remove('ativo');
                 btn.onclick = () => alert('Toque no botão Compartilhar (⬆️) na barra inferior do Safari, role para baixo e toque em "Adicionar à Tela de Início". Depois abra o AniVerse pelo ícone na sua tela.');
                 return;
             }
-
             if (notificacoesAtivas()) {
                 icon.textContent = '✅'; titulo.textContent = 'Notificações ativas!'; texto.textContent = 'Você vai receber um aviso quando sair episódio novo.';
                 btn.textContent = '✅ Ativado'; btn.classList.add('ativo'); btn.disabled = true; btn.onclick = null; return;
             }
-
             if (typeof Notification !== 'undefined' && Notification.permission === 'denied') {
                 icon.textContent = '🔕'; titulo.textContent = 'Notificações bloqueadas'; texto.textContent = 'Você bloqueou as notificações. Libere nas configurações do navegador.';
                 btn.textContent = '🔒 Bloqueado'; btn.disabled = true; btn.onclick = null; return;
             }
-
             icon.textContent = '🔔'; titulo.textContent = 'Ativar notificações'; texto.textContent = 'Receba um aviso quando sair episódio novo.';
             btn.textContent = '🔔 Ativar'; btn.classList.remove('ativo'); btn.disabled = false; btn.onclick = ativarNotificacoes;
         }
@@ -347,29 +348,21 @@
 
         async function verificarEpisodios() {
             if (!notificacoesAtivas()) return;
-            const agenda = carregarAgendaCustom();
-            const seguidos = getNotificacoes();
-            const enviadas = getEnviadas();
-            const agora = new Date();
-            const dias = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
-            const diaHoje = dias[agora.getDay()];
-            const horaAtual = agora.getHours() * 60 + agora.getMinutes();
+            const agenda = carregarAgendaCustom(); const seguidos = getNotificacoes(); const enviadas = getEnviadas();
+            const agora = new Date(); const dias = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
+            const diaHoje = dias[agora.getDay()]; const horaAtual = agora.getHours() * 60 + agora.getMinutes();
 
             for (const item of agenda) {
                 if (!seguidos.includes(item.animeId) || item.dia !== diaHoje) continue;
                 if (item.legendado && item.legendado.horario) {
                     const [h, m] = item.legendado.horario.split(':').map(Number);
                     const horarioMin = h * 60 + m; const chave = `${item.id}-leg-ep${item.ep}`;
-                    if (horaAtual >= horarioMin && horaAtual <= horarioMin + 35 && !enviadas.includes(chave)) {
-                        await dispararNotificacao(item, 'legendado', item.legendado); enviadas.push(chave);
-                    }
+                    if (horaAtual >= horarioMin && horaAtual <= horarioMin + 35 && !enviadas.includes(chave)) { await dispararNotificacao(item, 'legendado', item.legendado); enviadas.push(chave); }
                 }
                 if (item.dublado && item.dublado.horario) {
                     const [h, m] = item.dublado.horario.split(':').map(Number);
                     const horarioMin = h * 60 + m; const chave = `${item.id}-dub-ep${item.ep}`;
-                    if (horaAtual >= horarioMin && horaAtual <= horarioMin + 35 && !enviadas.includes(chave)) {
-                        await dispararNotificacao(item, 'dublado', item.dublado); enviadas.push(chave);
-                    }
+                    if (horaAtual >= horarioMin && horaAtual <= horarioMin + 35 && !enviadas.includes(chave)) { await dispararNotificacao(item, 'dublado', item.dublado); enviadas.push(chave); }
                 }
             }
             salvarEnviadas(enviadas);
@@ -381,7 +374,6 @@
             const emojiTipo = tipo === 'legendado' ? '🟢' : '🟡';
             const titulo = `${emojiTipo} ${anime.titulo} — Ep. ${String(item.ep).padStart(2, '0')}`;
             const corpo = `${tipo === 'legendado' ? 'Legendado' : 'Dublado'} saiu! Já disponível na ${info.plataforma}.`;
-
             if (swRegistration && swRegistration.active) {
                 swRegistration.active.postMessage({ tipo: 'notificar', titulo: titulo, corpo: corpo, url: 'agenda.html' });
             } else {
@@ -410,9 +402,7 @@
         }
 
         function render() {
-            const notifs = getNotificacoes();
-            const agenda = carregarAgendaCustom();
-            const grid = document.getElementById('animesGrid');
+            const notifs = getNotificacoes(); const agenda = carregarAgendaCustom(); const grid = document.getElementById('animesGrid');
             renderStats(notifs, agenda);
 
             if (notifs.length === 0) {
@@ -431,7 +421,6 @@
                 const badges = [];
                 if (proximo.legendado) badges.push(`<span class="badge-small legendado">🟢 ${proximo.legendado.horario}</span>`);
                 if (proximo.dublado) badges.push(`<span class="badge-small dublado">🟡 ${proximo.dublado.horario}</span>`);
-
                 cards.push(`
                     <div class="anime-card">
                         <img src="${anime.img}" alt="${anime.titulo}">
@@ -453,13 +442,7 @@
         }
 
         window.addEventListener('focus', () => { render(); verificarEpisodios(); });
-        window.addEventListener('load', async () => {
-            swRegistration = await registrarServiceWorker();
-            atualizarBannerNotif();
-            render();
-            setInterval(verificarEpisodios, 60000);
-            verificarEpisodios();
-        });
+        window.addEventListener('load', async () => { swRegistration = await registrarServiceWorker(); atualizarBannerNotif(); render(); setInterval(verificarEpisodios, 60000); verificarEpisodios(); });
     </script>
 </body>
 </html>
