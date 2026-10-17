@@ -25,17 +25,21 @@
         .btn-voltar { background: var(--bg-3); color: var(--text-muted); border: 1px solid var(--border-2); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: bold; text-decoration: none; transition: all 0.2s; }
         .btn-voltar:hover { border-color: var(--primary); color: var(--primary); }
 
-        /* MENU DE USUÁRIO */
         .user-menu-container { position: relative; }
         .user-profile { background-color: var(--bg-3); padding: 6px 12px; border-radius: 20px; display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; transition: background 0.2s; border: 1px solid var(--border-2); }
         .user-profile:hover { background: #252d3d; }
-        .user-dropdown { position: absolute; top: 100%; right: 0; margin-top: 8px; background: var(--bg-2); border: 1px solid var(--border-2); border-radius: 8px; padding: 8px; min-width: 200px; display: none; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 101; }
+        .user-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; overflow: hidden; flex-shrink: 0; }
+        .user-dropdown { position: absolute; top: 100%; right: 0; margin-top: 8px; background: var(--bg-2); border: 1px solid var(--border-2); border-radius: 8px; padding: 8px; min-width: 220px; display: none; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 101; }
         .user-dropdown.open { display: block; }
         .user-email { padding: 8px 12px; font-size: 12px; color: var(--text-muted); border-bottom: 1px solid var(--border); margin-bottom: 5px; word-break: break-all; }
         .btn-dropdown { display: block; width: 100%; text-align: left; background: transparent; color: var(--text); border: none; padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; transition: background 0.2s; }
         .btn-dropdown:hover { background: var(--bg-3); }
         .btn-dropdown.danger { color: var(--danger); }
         .btn-dropdown.danger:hover { background: rgba(239, 68, 68, 0.1); }
+        .emoji-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; padding: 10px; border-top: 1px solid var(--border); margin-top: 5px; }
+        .emoji-btn { background: var(--bg-3); border: 1px solid transparent; border-radius: 6px; font-size: 18px; cursor: pointer; padding: 5px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .emoji-btn:hover { background: var(--border-2); }
+        .emoji-btn.selected { border-color: var(--primary); background: rgba(139, 92, 246, 0.2); }
 
         .container { max-width: 900px; margin: 20px auto; padding: 0 20px; }
         .page-title { font-size: 24px; font-weight: bold; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
@@ -99,15 +103,23 @@
             <span class="admin-badge">ADMIN</span>
         </div>
         <div style="display: flex; align-items: center; gap: 15px;">
-            <a href="agenda.html" class="btn-voltar">← Voltar para Agenda</a>
+            <a href="agenda.html" class="btn-voltar">← Voltar</a>
             <div class="user-menu-container">
                 <div class="user-profile" onclick="toggleUserMenu()">
-                    <span>🦊</span>
+                    <div class="user-avatar" id="headerAvatar">AV</div>
                     <strong id="headerUserName">Carregando...</strong>
                 </div>
                 <div class="user-dropdown" id="userDropdown">
                     <div class="user-email" id="headerUserEmail"></div>
-                    <button class="btn-dropdown" onclick="sair()">🚪 Sair</button>
+                    <div style="padding: 8px 12px 0; font-size: 11px; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Seu Avatar:</div>
+                    <div class="emoji-grid" id="emojiGrid">
+                        <button class="emoji-btn selected" onclick="salvarAvatar('AV')">AV</button>
+                        <button class="emoji-btn" onclick="salvarAvatar('🦊')">🦊</button>
+                        <button class="emoji-btn" onclick="salvarAvatar('🐱')">🐱</button>
+                        <button class="emoji-btn" onclick="salvarAvatar('🐼')">🐼</button>
+                        <button class="emoji-btn" onclick="salvarAvatar('🔥')">🔥</button>
+                    </div>
+                    <button class="btn-dropdown" style="margin-top: 5px;" onclick="sair()">🚪 Sair</button>
                     <button class="btn-dropdown danger" onclick="deletarConta()">🗑️ Excluir Conta</button>
                 </div>
             </div>
@@ -198,7 +210,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut, deleteUser } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-        import { getFirestore, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { getFirestore, doc, deleteDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCOdEgBjNHqlEl_YbH93i3VBasfss5QeTs",
@@ -213,24 +225,45 @@
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // AQUI VOCÊ PROTEGE A PÁGINA: Só entra se for seu e-mail!
-                // Troque o e-mail abaixo pelo seu e-mail de admin
+                // PROTEÇÃO: Só entra se for seu e-mail!
                 if (user.email !== '07kadurodrig@gmail.com') {
                     alert('Acesso negado. Área restrita.');
                     window.location.href = 'agenda.html';
                     return;
                 }
-
                 const nome = user.displayName || user.email.split('@')[0];
                 document.getElementById('headerUserName').textContent = nome;
                 document.getElementById('headerUserEmail').textContent = user.email;
                 window.currentUser = user;
+
+                const docRef = doc(db, "usuarios", user.uid);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists() && docSnap.data().avatar) atualizarAvatarUI(docSnap.data().avatar);
+                else atualizarAvatarUI('AV');
             } else {
                 window.location.href = 'index.html';
             }
         });
+
+        function atualizarAvatarUI(avatar) {
+            const el = document.getElementById('headerAvatar');
+            el.innerHTML = avatar;
+            el.style.background = avatar === 'AV' ? 'var(--primary)' : 'var(--bg-3)';
+            document.querySelectorAll('.emoji-btn').forEach(btn => {
+                if(btn.textContent.trim() === avatar) btn.classList.add('selected');
+                else btn.classList.remove('selected');
+            });
+        }
+
+        window.salvarAvatar = async (avatar) => {
+            if (!window.currentUser) return;
+            try {
+                await setDoc(doc(db, "usuarios", window.currentUser.uid), { avatar: avatar }, { merge: true });
+                atualizarAvatarUI(avatar);
+            } catch (error) {}
+        };
 
         window.toggleUserMenu = () => { document.getElementById('userDropdown').classList.toggle('open'); };
         document.addEventListener('click', (e) => {
@@ -247,7 +280,7 @@
                         await deleteUser(user);
                         alert('Sua conta foi excluída.');
                         window.location.href = 'index.html';
-                    } catch (error) { alert('Erro ao excluir. Faça login novamente.'); }
+                    } catch (error) { alert('Erro ao excluir.'); }
                 }
             }
         };
@@ -256,26 +289,22 @@
     <script src="animes.js"></script>
     <script>
         const STORAGE_AGENDA = 'aniverse_agenda_custom';
-        let editandoId = null;
-        let diaFiltroAtual = 'todos';
+        let editandoId = null; let diaFiltroAtual = 'todos';
 
         function showToast(msg, tipo = '') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
-            toast.className = 'toast ' + tipo;
-            toast.textContent = msg;
+            toast.className = 'toast ' + tipo; toast.textContent = msg;
             container.appendChild(toast);
             setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
-        function carregarAgenda() {
-            try { const raw = localStorage.getItem(STORAGE_AGENDA); return raw ? JSON.parse(raw) : []; } catch { return []; }
-        }
+        function carregarAgenda() { try { const raw = localStorage.getItem(STORAGE_AGENDA); return raw ? JSON.parse(raw) : []; } catch { return []; } }
         function salvarAgenda(lista) { localStorage.setItem(STORAGE_AGENDA, JSON.stringify(lista)); }
 
         function preencherSelectAnimes() {
             const select = document.getElementById('inputAnime');
-            if (typeof ANIMES_LISTA === 'undefined') { select.innerHTML = '<option value="">Erro: animes.js não carregou</option>'; return; }
+            if (typeof ANIMES_LISTA === 'undefined') { select.innerHTML = '<option value="">Erro</option>'; return; }
             select.innerHTML = ANIMES_LISTA.map(a => `<option value="${a.id}">${a.titulo}</option>`).join('');
         }
 
@@ -286,10 +315,7 @@
             if (anime.diaSemana) document.getElementById('inputDia').value = anime.diaSemana;
             if (anime.horarioLegendado) document.getElementById('inputHorarioLeg').value = anime.horarioLegendado;
             if (anime.horarioDublado) document.getElementById('inputHorarioDub').value = anime.horarioDublado;
-            if (anime.plataforma) {
-                document.getElementById('inputPlataformaLeg').value = anime.plataforma;
-                document.getElementById('inputPlataformaDub').value = anime.plataforma;
-            }
+            if (anime.plataforma) { document.getElementById('inputPlataformaLeg').value = anime.plataforma; document.getElementById('inputPlataformaDub').value = anime.plataforma; }
         }
 
         function toggleCampos(idioma) {
@@ -312,77 +338,50 @@
             const dublado = chkDub ? { horario: document.getElementById('inputHorarioDub').value || '16:00', plataforma: document.getElementById('inputPlataformaDub').value } : null;
 
             const agenda = carregarAgenda();
-
             if (editandoId) {
                 const idx = agenda.findIndex(item => item.id === editandoId);
                 if (idx >= 0) { agenda[idx] = { ...agenda[idx], animeId, dia, ep, legendado, dublado }; }
-                showToast('✅ Anime atualizado!', 'success');
-                cancelarEdicao();
+                showToast('✅ Anime atualizado!', 'success'); cancelarEdicao();
             } else {
                 const novo = { id: 'ag_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6), animeId, dia, ep, legendado, dublado, criadoEm: Date.now() };
                 agenda.push(novo);
                 showToast('✅ Anime adicionado!', 'success');
             }
-
-            salvarAgenda(agenda);
-            limparFormulario();
-            renderLista();
+            salvarAgenda(agenda); limparFormulario(); renderLista();
         }
 
         function limparFormulario() {
-            document.getElementById('inputAnime').selectedIndex = 0;
-            document.getElementById('inputDia').value = 'segunda';
-            document.getElementById('inputEp').value = 1;
-            document.getElementById('chkLegendado').checked = true;
-            document.getElementById('chkDublado').checked = true;
-            document.getElementById('inputHorarioLeg').value = '14:00';
-            document.getElementById('inputHorarioDub').value = '16:00';
-            document.getElementById('inputPlataformaLeg').value = 'crunchyroll';
-            document.getElementById('inputPlataformaDub').value = 'crunchyroll';
+            document.getElementById('inputAnime').selectedIndex = 0; document.getElementById('inputDia').value = 'segunda'; document.getElementById('inputEp').value = 1;
+            document.getElementById('chkLegendado').checked = true; document.getElementById('chkDublado').checked = true;
+            document.getElementById('inputHorarioLeg').value = '14:00'; document.getElementById('inputHorarioDub').value = '16:00';
+            document.getElementById('inputPlataformaLeg').value = 'crunchyroll'; document.getElementById('inputPlataformaDub').value = 'crunchyroll';
             toggleCampos('legendado'); toggleCampos('dublado');
         }
 
         function cancelarEdicao() {
-            editandoId = null;
-            document.getElementById('formTitulo').textContent = '➕ Adicionar Anime na Agenda';
-            document.getElementById('btnSalvar').innerHTML = '💾 Salvar';
-            document.getElementById('btnCancelar').style.display = 'none';
-            limparFormulario();
+            editandoId = null; document.getElementById('formTitulo').textContent = '➕ Adicionar Anime na Agenda';
+            document.getElementById('btnSalvar').innerHTML = '💾 Salvar'; document.getElementById('btnCancelar').style.display = 'none'; limparFormulario();
         }
 
         function editarItem(id) {
-            const agenda = carregarAgenda();
-            const item = agenda.find(x => x.id === id);
+            const agenda = carregarAgenda(); const item = agenda.find(x => x.id === id);
             if (!item) return;
-
-            editandoId = id;
-            document.getElementById('inputAnime').value = item.animeId;
-            document.getElementById('inputDia').value = item.dia;
-            document.getElementById('inputEp').value = item.ep;
-            document.getElementById('chkLegendado').checked = !!item.legendado;
-            document.getElementById('chkDublado').checked = !!item.dublado;
+            editandoId = id; document.getElementById('inputAnime').value = item.animeId; document.getElementById('inputDia').value = item.dia; document.getElementById('inputEp').value = item.ep;
+            document.getElementById('chkLegendado').checked = !!item.legendado; document.getElementById('chkDublado').checked = !!item.dublado;
             if (item.legendado) { document.getElementById('inputHorarioLeg').value = item.legendado.horario; document.getElementById('inputPlataformaLeg').value = item.legendado.plataforma; }
             if (item.dublado) { document.getElementById('inputHorarioDub').value = item.dublado.horario; document.getElementById('inputPlataformaDub').value = item.dublado.plataforma; }
             toggleCampos('legendado'); toggleCampos('dublado');
-
-            document.getElementById('formTitulo').textContent = '✏️ Editando Anime';
-            document.getElementById('btnSalvar').innerHTML = '💾 Salvar Alterações';
-            document.getElementById('btnCancelar').style.display = 'flex';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.getElementById('formTitulo').textContent = '✏️ Editando Anime'; document.getElementById('btnSalvar').innerHTML = '💾 Salvar Alterações'; document.getElementById('btnCancelar').style.display = 'flex'; window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function deletarItem(id) {
             if (!confirm('Tem certeza que quer remover este anime da agenda?')) return;
-            let agenda = carregarAgenda();
-            agenda = agenda.filter(x => x.id !== id);
-            salvarAgenda(agenda);
-            renderLista();
-            showToast('🗑️ Anime removido.', 'success');
+            let agenda = carregarAgenda(); agenda = agenda.filter(x => x.id !== id);
+            salvarAgenda(agenda); renderLista(); showToast('🗑️ Anime removido.', 'success');
         }
 
         function renderLista() {
-            const agenda = carregarAgenda();
-            const container = document.getElementById('listaItens');
+            const agenda = carregarAgenda(); const container = document.getElementById('listaItens');
             let filtrada = agenda;
             if (diaFiltroAtual !== 'todos') { filtrada = agenda.filter(x => x.dia === diaFiltroAtual); }
 
@@ -419,18 +418,12 @@
         }
 
         document.getElementById('daysTabs').addEventListener('click', e => {
-            const btn = e.target.closest('.day-btn');
-            if (!btn) return;
-            document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            diaFiltroAtual = btn.dataset.dia;
-            renderLista();
+            const btn = e.target.closest('.day-btn'); if (!btn) return;
+            document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active');
+            diaFiltroAtual = btn.dataset.dia; renderLista();
         });
 
-        window.addEventListener('load', () => {
-            preencherSelectAnimes();
-            renderLista();
-        });
+        window.addEventListener('load', () => { preencherSelectAnimes(); renderLista(); });
     </script>
 </body>
 </html>
