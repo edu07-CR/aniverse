@@ -3,22 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Meus animes - AniVerse">
-    <meta name="theme-color" content="#0b0e14">
     <title>AniVerse - Meus Animes</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%238b5cf6'/><text x='50' y='68' font-size='52' font-family='Arial' font-weight='bold' fill='white' text-anchor='middle'>AV</text></svg>">
     <link rel="manifest" href="manifest.json">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        :root {
-            --bg: #0b0e14; --bg-2: #121721; --bg-3: #1a202c;
-            --border: #1e2638; --border-2: #2d3748;
-            --text: #ffffff; --text-muted: #9ca3af; --text-dim: #718096;
-            --primary: #8b5cf6; --primary-hover: #7c3aed; --blue: #2b7fff;
-            --accent: #38bdf8; --success: #10b981; --danger: #ef4444;
-            --warning: #f59e0b;
-            --legendado: #22c55e; --dublado: #eab308;
-        }
+        :root { --bg: #0b0e14; --bg-2: #121721; --bg-3: #1a202c; --border: #1e2638; --border-2: #2d3748; --text: #ffffff; --text-muted: #9ca3af; --text-dim: #718096; --primary: #8b5cf6; --primary-hover: #7c3aed; --blue: #2b7fff; --accent: #38bdf8; --success: #10b981; --danger: #ef4444; --warning: #f59e0b; --legendado: #22c55e; --dublado: #eab308; }
         body { background-color: var(--bg); color: var(--text); padding-bottom: 50px; }
 
         header { background-color: var(--bg-2); padding: 15px 30px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 15px; }
@@ -33,7 +23,6 @@
         nav a.admin-link { color: var(--primary); }
         .menu-toggle { display: none; background: var(--bg-3); border: 1px solid var(--border-2); color: white; font-size: 20px; padding: 6px 12px; border-radius: 8px; cursor: pointer; }
 
-        /* MENU DE USUÁRIO COM AVATAR */
         .user-menu-container { position: relative; }
         .user-profile { background-color: var(--bg-3); padding: 6px 12px; border-radius: 20px; display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; transition: background 0.2s; border: 1px solid var(--border-2); }
         .user-profile:hover { background: #252d3d; }
@@ -102,24 +91,9 @@
         .toast.error { border-left-color: var(--danger); }
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
-        @media (max-width: 900px) {
-            .menu-toggle { display: block; }
-            nav { display: none; width: 100%; flex-direction: column; gap: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
-            nav.open { display: flex; }
-            nav a.active::after { display: none; }
-            nav a.active { color: var(--primary); }
-        }
-        @media (max-width: 640px) {
-            header { padding: 12px 15px; }
-            .container { padding: 0 12px; }
-            .page-title { font-size: 20px; }
-            .animes-grid { grid-template-columns: 1fr; }
-            .notif-banner { flex-direction: column; text-align: center; }
-            .notif-banner-icon { font-size: 48px; }
-        }
-        @media (max-width: 480px) {
-            .brand-name, .badge-tag { display: none; }
-        }
+        @media (max-width: 900px) { .menu-toggle { display: block; } nav { display: none; width: 100%; flex-direction: column; gap: 10px; padding-top: 10px; border-top: 1px solid var(--border); } nav.open { display: flex; } nav a.active::after { display: none; } nav a.active { color: var(--primary); } }
+        @media (max-width: 640px) { header { padding: 12px 15px; } .container { padding: 0 12px; } .page-title { font-size: 20px; } .animes-grid { grid-template-columns: 1fr; } .notif-banner { flex-direction: column; text-align: center; } .notif-banner-icon { font-size: 48px; } }
+        @media (max-width: 480px) { .brand-name, .badge-tag { display: none; } }
         button:focus-visible, a:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
     </style>
 </head>
@@ -187,14 +161,7 @@
         import { getAuth, onAuthStateChanged, signOut, deleteUser } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
         import { deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCOdEgBjNHqlEl_YbH93i3VBasfss5QeTs",
-            authDomain: "aniverse-fae73.firebaseapp.com",
-            projectId: "aniverse-fae73",
-            storageBucket: "aniverse-fae73.firebasestorage.app",
-            messagingSenderId: "699188842665",
-            appId: "1:699188842665:web:f29f6cbbc5b0c8a61c59b8"
-        };
+        const firebaseConfig = { apiKey: "AIzaSyCOdEgBjNHqlEl_YbH93i3VBasfss5QeTs", authDomain: "aniverse-fae73.firebaseapp.com", projectId: "aniverse-fae73", storageBucket: "aniverse-fae73.firebasestorage.app", messagingSenderId: "699188842665", appId: "1:699188842665:web:f29f6cbbc5b0c8a61c59b8" };
         const VAPID_KEY = "BE-aTK1J5J3WsmQDCUH0UP_QoFM_9LXzwG3zYM3FG2rbp2HwsdaNcMSfusJLlLng9BXfR3Xksx4SeCdQXr2GATvo";
 
         try {
@@ -204,6 +171,17 @@
             const auth = getAuth(app);
             window.aniverseFCM = { db, messaging, doc, setDoc, getToken, VAPID_KEY };
             window.aniverseAuth = { auth, signOut, deleteUser, db, doc, deleteDoc, setDoc, getDoc };
+
+            window.forcarLimpezaELogout = () => {
+                localStorage.clear();
+                sessionStorage.clear();
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(registrations => {
+                        for(let r of registrations) r.unregister();
+                    });
+                }
+                window.location.href = 'index.html?logout=true';
+            };
 
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
@@ -217,7 +195,7 @@
                     if (docSnap.exists() && docSnap.data().avatar) atualizarAvatarUI(docSnap.data().avatar);
                     else atualizarAvatarUI('AV');
                 } else {
-                    window.location.href = 'index.html';
+                    window.forcarLimpezaELogout();
                 }
             });
         } catch (err) {}
@@ -246,7 +224,7 @@
             if (container && !container.contains(e.target)) document.getElementById('userDropdown').classList.remove('open');
         });
 
-        window.sair = async () => { await window.aniverseAuth.signOut(window.aniverseAuth.auth); window.location.href = 'index.html'; };
+        window.sair = async () => { await window.aniverseAuth.signOut(window.aniverseAuth.auth); window.forcarLimpezaELogout(); };
         window.deletarConta = async () => {
             if (confirm('Tem certeza absoluta? Isso apagará sua conta e todos os seus dados.')) {
                 const user = window.currentUser;
@@ -255,7 +233,7 @@
                         await window.aniverseAuth.deleteDoc(window.aniverseAuth.doc(window.aniverseAuth.db, "usuarios", user.uid));
                         await window.aniverseAuth.deleteUser(user);
                         alert('Sua conta foi excluída.');
-                        window.location.href = 'index.html';
+                        window.forcarLimpezaELogout();
                     } catch (error) { alert('Erro ao excluir.'); }
                 }
             }
