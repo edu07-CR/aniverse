@@ -97,15 +97,22 @@
         const db = getFirestore(app);
         window.aniverseAuth = { auth, db, doc, setDoc, getDoc, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, updateProfile };
 
-        // Se o usuário já está logado, manda pra agenda
-        onAuthStateChanged(auth, (user) => {
-            if (user) window.location.href = 'agenda.html';
-        });
-
-        // Se a URL tiver ?logout=true, limpa a URL visualmente
+        // PROTEÇÃO: Se a URL tiver ?logout=true, limpa tudo e desloga a força
         if (window.location.search.includes('logout=true')) {
             window.history.replaceState({}, document.title, window.location.pathname);
+            signOut(auth).then(() => {
+                localStorage.clear();
+                sessionStorage.clear();
+                console.log("Sessão limpa com sucesso.");
+            });
         }
+
+        onAuthStateChanged(auth, (user) => {
+            // Só redireciona se estiver logado e NÃO for um pedido de logout
+            if (user && !window.location.search.includes('logout=true')) {
+                window.location.href = 'agenda.html';
+            }
+        });
     </script>
     <script>
         let isCadastro = false;
